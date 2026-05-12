@@ -19,20 +19,18 @@ spec:
         - name: ganache
           image: {{ .Values.ganache.image }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - anvil
           args:
-            - --dev
-            - --http
-            - --http.addr
+            - --host
             - 0.0.0.0
-            - --http.port
+            - --port
             - "7545"
-            - --http.api
-            - eth,net,web3,debug,miner,txpool
-            - --http.corsdomain
-            - "*"
-            - --http.vhosts
-            - "*"
-            - --dev.period
+            - --chain-id
+            - {{ .Values.ganache.chainId | quote }}
+            - --mnemonic
+            - {{ .Values.ganache.mnemonic | quote }}
+            - --block-time
             - "1"
           ports:
             - containerPort: 7545

@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 ganache:
-  image: ethereum/client-go:stable
+  image: ghcr.io/foundry-rs/foundry:latest
   chainId: "1337"
   mnemonic: "test test test test test test test test test test test junk"
 

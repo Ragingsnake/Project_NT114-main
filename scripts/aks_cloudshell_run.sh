@@ -78,7 +78,7 @@ create_aks_cluster_with_fallback() {
         --node-vm-size "$size" \
         --generate-ssh-keys \
         --attach-acr "$ACR_NAME" \
-        --enable-addons monitoring > /dev/null 2>"$err_file"; then
+        > /dev/null 2>"$err_file"; then
         NODE_SIZE="$size"
         NODE_COUNT="$count"
         rm -f "$err_file"

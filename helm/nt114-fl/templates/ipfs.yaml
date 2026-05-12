@@ -23,13 +23,19 @@ spec:
           ports:
             - containerPort: 5001
             - containerPort: 4001
+          securityContext:
+            runAsUser: 0
           volumeMounts:
             - name: ipfs-data
               mountPath: /data/ipfs
       volumes:
         - name: ipfs-data
+{{- if .Values.storage.ipfsUsePvc }}
           persistentVolumeClaim:
             claimName: ipfs-data
+{{- else }}
+          emptyDir: {}
+{{- end }}
 ---
 apiVersion: v1
 kind: Service

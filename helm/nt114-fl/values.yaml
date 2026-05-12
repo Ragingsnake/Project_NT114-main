@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 ganache:
-  image: trufflesuite/ganache:v7.9.2
+  image: ethereum/client-go:stable
   chainId: "1337"
   mnemonic: "test test test test test test test test test test test junk"
 
@@ -17,6 +17,7 @@ storage:
   className: azurefile-csi
   resultsSize: 10Gi
   ipfsSize: 10Gi
+  ipfsUsePvc: false
 
 contract:
   artifact: /app/build/contracts/Reputation.json

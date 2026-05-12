@@ -16,7 +16,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: deploy
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ include "nt114-fl.appImage" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["python", "deploy_contract.py"]
           envFrom:

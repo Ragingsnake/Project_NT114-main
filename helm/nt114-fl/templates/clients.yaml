@@ -30,7 +30,7 @@ spec:
               mountPath: /results
       containers:
         - name: fl-client-{{ $clientId }}
-          image: {{ $root.Values.image.repository }}:{{ $root.Values.image.tag }}
+          image: {{ include "nt114-fl.appImage" $root }}
           imagePullPolicy: {{ $root.Values.image.pullPolicy }}
           command: ["python", "fl_client.py", "{{ $clientId }}", "{{ $root.Values.fl.splitType }}"]
           envFrom:

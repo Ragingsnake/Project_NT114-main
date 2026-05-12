@@ -13,6 +13,7 @@ spec:
     requests:
       storage: {{ .Values.storage.resultsSize }}
 ---
+{{- if .Values.storage.ipfsUsePvc }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -21,7 +22,6 @@ metadata:
   labels:
     {{- include "nt114-fl.labels" . | nindent 4 }}
 spec:
-{{- if .Values.storage.ipfsUsePvc }}
   accessModes:
     - ReadWriteMany
   storageClassName: {{ .Values.storage.className }}

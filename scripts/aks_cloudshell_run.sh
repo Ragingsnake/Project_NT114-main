@@ -266,6 +266,10 @@ if [[ -n "$FAULTY_CLIENTS" ]]; then
   HELM_SET_ARGS+=(--set-string "faultyClients=$FAULTY_CLIENTS")
 fi
 
+log "Deleting previous FL jobs to avoid immutable Job template upgrade errors"
+kubectl delete job -n "$NAMESPACE" -l "app.kubernetes.io/instance=nt114-fl" --ignore-not-found=true >/dev/null 2>&1 || true
+kubectl wait --for=delete job -n "$NAMESPACE" -l "app.kubernetes.io/instance=nt114-fl" --timeout=180s >/dev/null 2>&1 || true
+
 helm upgrade --install nt114-fl helm/nt114-fl -n "$NAMESPACE" \
   --create-namespace \
   -f helm/nt114-fl/values-aks.yaml \

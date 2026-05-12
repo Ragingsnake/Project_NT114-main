@@ -27,7 +27,7 @@ spec:
               mountPath: /results
       containers:
         - name: fl-server
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ include "nt114-fl.appImage" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["python", "fl_server.py"]
           envFrom:

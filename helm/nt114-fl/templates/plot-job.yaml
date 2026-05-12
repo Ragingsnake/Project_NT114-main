@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: plot
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ include "nt114-fl.appImage" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["python", "plot_results.py"]
           env:

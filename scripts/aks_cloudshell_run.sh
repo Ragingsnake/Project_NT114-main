@@ -41,11 +41,8 @@ aks_size_available() {
 
 create_aks_cluster_with_fallback() {
   local fallback_sizes=(
-    Standard_D2s_v5
-    Standard_D2s_v4
-    Standard_B2s
-    Standard_B2ms
-    Standard_A2_v2
+    Standard_B2ps_v2
+    Standard_B2pls_v2
   )
 
   local size_candidates=("$NODE_SIZE")
@@ -111,31 +108,46 @@ create_aks_cluster_with_fallback() {
 
 wait_for_jobs() {
   local timeout_seconds="${1:-7200}"
-  local start_time now jobs job failed_count
+  local start_time now jobs job failed_count completed_count active_count
 
   start_time="$(date +%s)"
 
   while true; do
-    mapfile -t jobs < <(kubectl get jobs -n "$NAMESPACE" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+    mapfile -t jobs < <(kubectl get jobs -n "$NAMESPACE" -l "app.kubernetes.io/instance=nt114-fl" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
 
     if [[ "${#jobs[@]}" -eq 0 ]]; then
       now="$(date +%s)"
       if (( now - start_time > timeout_seconds )); then
         die "Timed out waiting for jobs to be created in namespace $NAMESPACE"
       fi
+      log "Waiting for release jobs to appear in namespace $NAMESPACE"
       sleep 10
       continue
     fi
 
+    log "Tracking ${#jobs[@]} release job(s): ${jobs[*]}"
+
     failed_count=0
+    completed_count=0
+    active_count=0
     for job in "${jobs[@]}"; do
-      if kubectl get job "$job" -n "$NAMESPACE" -o jsonpath='{.status.failed}' 2>/dev/null | grep -Eq '^[1-9][0-9]*$'; then
+      local succeeded failed active
+      succeeded="$(kubectl get job "$job" -n "$NAMESPACE" -o jsonpath='{.status.succeeded}' 2>/dev/null || true)"
+      failed="$(kubectl get job "$job" -n "$NAMESPACE" -o jsonpath='{.status.failed}' 2>/dev/null || true)"
+      active="$(kubectl get job "$job" -n "$NAMESPACE" -o jsonpath='{.status.active}' 2>/dev/null || true)"
+
+      if [[ "$failed" =~ ^[1-9][0-9]*$ ]]; then
         log "Job failed: $job"
         kubectl logs job/"$job" -n "$NAMESPACE" --tail=200 || true
         failed_count=$((failed_count + 1))
+        continue
       fi
 
-      kubectl wait --for=condition=complete "job/$job" -n "$NAMESPACE" --timeout=7200s >/dev/null 2>&1 || true
+      if [[ "$succeeded" =~ ^[1-9][0-9]*$ ]]; then
+        completed_count=$((completed_count + 1))
+      elif [[ "$active" =~ ^[1-9][0-9]*$ ]]; then
+        active_count=$((active_count + 1))
+      fi
     done
 
     if [[ "$failed_count" -gt 0 ]]; then
@@ -150,6 +162,16 @@ wait_for_jobs() {
       fi
     done
 
+    log "Current status:"
+    kubectl get jobs -n "$NAMESPACE" -l "app.kubernetes.io/instance=nt114-fl" \
+      -o custom-columns='NAME:.metadata.name,SUCCEEDED:.status.succeeded,FAILED:.status.failed,ACTIVE:.status.active,AGE:.metadata.creationTimestamp' || true
+    kubectl get pods -n "$NAMESPACE" -l "app.kubernetes.io/instance=nt114-fl" \
+      -o custom-columns='NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[*].ready,RESTARTS:.status.containerStatuses[*].restartCount,NODE:.spec.nodeName' || true
+
+    if [[ "$active_count" -gt 0 && "$completed_count" -eq 0 ]]; then
+      log "Jobs are still starting or waiting on dependencies; this is often the contract bootstrap or initContainer wait phase."
+    fi
+
     if [[ "$incomplete" == "false" ]]; then
       break
     fi
@@ -163,7 +185,13 @@ wait_for_jobs() {
   done
 }
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd || pwd)"
+if [[ ! -f "$ROOT_DIR/Dockerfile" ]]; then
+  ROOT_DIR="$(pwd)"
+  if [[ ! -f "$ROOT_DIR/Dockerfile" ]]; then
+    die "Cannot find Dockerfile in $ROOT_DIR. Ensure you are running the script from the repo root or with correct path."
+  fi
+fi
 cd "$ROOT_DIR"
 
 require_cmd az
@@ -173,7 +201,7 @@ ensure_helm
 require_cmd curl
 
 RG="${RG:-nt114-rg}"
-LOCATION="${LOCATION:-koreacentral}"
+LOCATION="${LOCATION:-centralindia}"
 AKS_NAME="${AKS_NAME:-nt114-aks}"
 NAMESPACE="${NAMESPACE:-nt114-fl}"
 NODE_COUNT="${NODE_COUNT:-3}"
@@ -212,10 +240,22 @@ else
 fi
 
 az aks get-credentials --resource-group "$RG" --name "$AKS_NAME" --overwrite-existing >/dev/null
-kubectl create namespace "$NAMESPACE" >/dev/null 2>&1 || true
+if kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+  log "Namespace $NAMESPACE already exists; deleting it so Helm can create an owned namespace"
+  kubectl delete namespace "$NAMESPACE" --ignore-not-found=true >/dev/null
+  kubectl wait --for=delete namespace "$NAMESPACE" --timeout=300s >/dev/null
+fi
 
 log "Building and pushing the image with ACR build"
-az acr build --registry "$ACR_NAME" --image "$IMAGE_NAME:$IMAGE_TAG" "$ROOT_DIR" >/dev/null
+az acr build --registry "$ACR_NAME" --image "$IMAGE_NAME:$IMAGE_TAG" . >/dev/null
+
+# [16:43:07] Trying AKS create with NODE_SIZE=Standard_B2ps_v2 NODE_COUNT=3
+
+# [16:49:25] AKS created successfully with NODE_SIZE=Standard_B2ps_v2 NODE_COUNT=3
+# WARNING: Merged "nt114-aks" as current context in /home/tran/.kube/config
+
+# [16:49:26] Building and pushing the image with ACR build
+# ERROR: Unable to find '/home/Dockerfile'.
 
 log "Deploying Helm release"
 HELM_SET_ARGS=(
@@ -227,6 +267,7 @@ if [[ -n "$FAULTY_CLIENTS" ]]; then
 fi
 
 helm upgrade --install nt114-fl helm/nt114-fl -n "$NAMESPACE" \
+  --create-namespace \
   -f helm/nt114-fl/values-aks.yaml \
   "${HELM_SET_ARGS[@]}"
 

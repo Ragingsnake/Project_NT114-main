@@ -19,19 +19,15 @@ spec:
         - name: ganache
           image: {{ .Values.ganache.image }}
           imagePullPolicy: {{ .Values.images.pullPolicy }}
-          command:
-            - anvil
           args:
-            - --host
-            - 0.0.0.0
-            - --port
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
             - "7545"
-            - --chain-id
+            - "--chain.chainId"
             - {{ .Values.ganache.chainId | quote }}
-            - --mnemonic
+            - "--wallet.mnemonic"
             - {{ .Values.ganache.mnemonic | quote }}
-            - --block-time
-            - "1"
           ports:
             - containerPort: 7545
 ---

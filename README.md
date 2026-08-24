@@ -4,7 +4,7 @@ A secure, decentralized Federated Learning (FL) architecture that leverages **Bl
 
 ---
 
-## ?? Architecture Overview
+## 🏗 Architecture Overview
 
 Traditional Federated Learning relies on a trusted central server and is highly vulnerable to malicious clients uploading poisoned models (e.g., Backdoor Attacks, Label Flipping, Scaling Attacks). 
 
@@ -17,7 +17,7 @@ This project solves those vulnerabilities using a multi-layered defense:
 3. **Blockchain Reputation System (Second Line of Defense):**
    The central aggregator validates updates using Cosine Similarity and Interquartile Range (IQR) analysis. Malicious updates (e.g., sneaky label-flipping) are rejected, and the client's reputation is permanently slashed on the Ethereum blockchain via Smart Contracts.
 
-## ?? Attack Scenarios & Defenses
+## 🛡 Attack Scenarios & Defenses
 
 This repository features built-in adversarial simulation. You can deploy the clients in 4 different ATTACK_MODEs:
 
@@ -29,7 +29,7 @@ ormal: Honest local training.
 
 ---
 
-## ?? Local Deployment (Docker Compose)
+## 💻 Local Deployment (Docker Compose)
 
 The entire stack is fully modularized and containerized. 
 
@@ -40,7 +40,7 @@ The entire stack is fully modularized and containerized.
 ### Running the Stack
 Use the provided PowerShell manager script to control the local lifecycle:
 
-``powershell
+`powershell
 # Run a normal, honest FL session
 .\scripts\powershell\manage.ps1 -Command start-normal
 
@@ -52,11 +52,11 @@ Use the provided PowerShell manager script to control the local lifecycle:
 
 # Stop and clean up volumes
 .\scripts\powershell\manage.ps1 -Command stop
-``
+`
 
 ---
 
-## ?? Cloud Deployment (Azure Kubernetes Service)
+## ☁️ Cloud Deployment (Azure Kubernetes Service)
 
 If you want to train on the cloud (e.g., using your Azure for Students credits) without burning your local CPU or GitHub Action limits, we provide a fully automated **2-Node AKS Deployment Workflow**.
 
@@ -89,7 +89,7 @@ ormal, yzantine, label_flip, zkp_block).
 
 ---
 
-## ?? GitHub Actions CI/CD
+## 🚀 GitHub Actions CI/CD
 
 Prefer clickable buttons? We've wrapped the AKS deployment scripts into **Manual Dispatch Workflows**.
 Go to the **Actions** tab in GitHub to easily Provision, Dispatch Attacks, Fetch Results (via Artifacts), and Destroy the cluster right from your browser!

@@ -1,0 +1,19 @@
+name: Create Azure FL Infrastructure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Provision AKS Cluster
+        run: |
+          pwsh ./scripts/azure/1_provision_aks.ps1

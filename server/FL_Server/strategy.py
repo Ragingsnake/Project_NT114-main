@@ -35,7 +35,7 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
         self.start_time = None
         self.global_weights = None
         self.history = {
-            "global": {"round": [], "accuracy": [], "loss": [], "verification_time": [], "penalty_clients": [], "round_time": []},
+            "global": {"round": [], "accuracy": [], "loss": [], "verification_time": [], "penalty_clients": [], "round_time": [], "rejections_zkp": [], "rejections_rep": []},
             "clients": {}
         }
 
@@ -60,6 +60,8 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
         clients_info = []
         round_verify_times = []
         penalty_clients = []
+        zkp_rejections = 0
+        rep_rejections = 0
 
         # ===== VERIFY ZKP =====
         for client, fit_res in results:
@@ -200,6 +202,8 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
         if round_verify_times:
             self.history["global"]["verification_time"].append(float(np.mean(round_verify_times)))
             self.history["global"]["penalty_clients"].append(penalty_clients)
+        self.history["global"]["rejections_zkp"].append(zkp_rejections)
+        self.history["global"]["rejections_rep"].append(rep_rejections)
 
         return ndarrays_to_parameters(self.global_weights), {}
     

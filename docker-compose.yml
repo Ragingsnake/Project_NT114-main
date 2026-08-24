@@ -58,6 +58,8 @@ services:
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
       FAULTY_CLIENTS: "${FAULTY_CLIENTS:-}"
       ZKP_NODE_URL: http://fl-zkp-node:8081
+      MALICIOUS: "${MALICIOUS:-false}"
+      ATTACK_MODE: "${ATTACK_MODE:-zkp_block}"
     volumes:
       - shared-runtime:/app/runtime
       - ./output/history:/app/history
@@ -84,6 +86,8 @@ services:
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
       ZKP_NODE_URL: http://fl-zkp-node:8081
+      MALICIOUS: "${MALICIOUS:-false}"
+      ATTACK_MODE: "${ATTACK_MODE:-zkp_block}"
     volumes:
       - shared-runtime:/app/runtime
     depends_on:
@@ -101,6 +105,8 @@ services:
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
       ZKP_NODE_URL: http://fl-zkp-node:8081
+      MALICIOUS: "${MALICIOUS:-false}"
+      ATTACK_MODE: "${ATTACK_MODE:-zkp_block}"
     volumes:
       - shared-runtime:/app/runtime
     depends_on:
@@ -118,6 +124,8 @@ services:
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
       ZKP_NODE_URL: http://fl-zkp-node:8081
+      MALICIOUS: "${MALICIOUS:-false}"
+      ATTACK_MODE: "${ATTACK_MODE:-zkp_block}"
     volumes:
       - shared-runtime:/app/runtime
     depends_on:
@@ -136,6 +144,8 @@ services:
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
       ZKP_NODE_URL: http://fl-zkp-node:8081
       MALICIOUS: "${MALICIOUS:-false}"
+      ATTACK_MODE: "${ATTACK_MODE:-zkp_block}"
+      MALICIOUS: "${MALICIOUS:-false}"
     volumes:
       - shared-runtime:/app/runtime
     depends_on:
@@ -153,6 +163,8 @@ services:
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
       ZKP_NODE_URL: http://fl-zkp-node:8081
+      MALICIOUS: "${MALICIOUS:-false}"
+      ATTACK_MODE: "${ATTACK_MODE:-zkp_block}"
     volumes:
       - shared-runtime:/app/runtime
     depends_on:

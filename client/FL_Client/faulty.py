@@ -1,41 +1,41 @@
 import numpy as np
+import os
 
 TOTAL_CLIENTS = 5
 LAMBDA = 1 
-
 LAST_FAULTY = set()
+ATTACK_MODE = os.getenv("ATTACK_MODE", "zkp_block")
 
 def get_faulty_clients(round_num):
     global LAST_FAULTY
-
     num_faulty = np.random.poisson(LAMBDA)
-    num_faulty = min(num_faulty, TOTAL_CLIENTS      )
-
+    num_faulty = min(num_faulty, TOTAL_CLIENTS)
     candidates = list(set(range(1, TOTAL_CLIENTS + 1)) - LAST_FAULTY)
-
     if len(candidates) < num_faulty:
         candidates = list(range(1, TOTAL_CLIENTS + 1))
-
     faulty_clients = list(np.random.choice(candidates, num_faulty, replace=False))
-
     LAST_FAULTY = set(faulty_clients)
-
-    print(f"[Round {round_num}] Faulty clients: {faulty_clients} (Poisson λ={LAMBDA})")
-
+    print(f"[Round {round_num}] Faulty clients: {faulty_clients} (Poisson I={LAMBDA})")
     return faulty_clients
 
-
 def is_faulty_client(client_id, round_num):
-
     faulty_clients = get_faulty_clients(round_num)
-
     return client_id in faulty_clients
 
 def corrupt_parameters(params):
+    if ATTACK_MODE == "normal":
+        return params
+
     corrupted = []
     for p in params:
-        # Instead of tiny 0.01 noise, we heavily scramble the weights and invert them
-        # This simulates a strong poisoning attack (or severe label flipping equivalent)
-        noise = np.random.normal(0, 5.0, p.shape)
-        corrupted.append((p * -5.0) + noise)
+        if ATTACK_MODE == "zkp_block":
+            noise = np.random.normal(0, 5.0, p.shape)
+            corrupted.append((p * 100.0) + noise)
+        elif ATTACK_MODE == "label_flip":
+            noise = np.random.normal(0, 0.01, p.shape)
+            corrupted.append((p * -1.0) + noise)
+        elif ATTACK_MODE == "byzantine":
+            corrupted.append(np.random.normal(0, 10.0, p.shape))
+        else:
+            corrupted.append(p)
     return corrupted

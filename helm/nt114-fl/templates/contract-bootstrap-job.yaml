@@ -16,9 +16,9 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: deploy
-          image: {{ include "nt114-fl.appImage" . }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["python", "deploy_contract.py"]
+          image: {{ .Values.images.blockchain }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          
           envFrom:
             - configMapRef:
                 name: fl-config

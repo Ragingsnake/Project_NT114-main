@@ -1,0 +1,36 @@
+name: Dispatch FL Attack Scenario
+
+on:
+  workflow_dispatch:
+    inputs:
+      attack_mode:
+        description: 'Choose the attack scenario to deploy'
+        required: true
+        type: choice
+        default: 'normal'
+        options:
+          - normal
+          - byzantine
+          - label_flip
+          - zkp_block
+
+jobs:
+  run-attack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Attack via Helm to AKS
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+          
+          az aks get-credentials --resource-group FL-ZKP-RG --name fl-zkp-aks --overwrite-existing
+          
+          pwsh ./scripts/azure/2_run_test_aks.ps1 -AttackMode ${{ github.event.inputs.attack_mode }}

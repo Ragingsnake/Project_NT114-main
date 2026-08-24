@@ -27,13 +27,15 @@ spec:
               mountPath: /results
       containers:
         - name: fl-server
-          image: {{ include "nt114-fl.appImage" . }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["python", "fl_server.py"]
+          image: {{ .Values.images.server }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          
           envFrom:
             - configMapRef:
                 name: fl-config
           env:
+            - name: ZKP_NODE_URL
+              value: "http://fl-zkp-node:8081"
             - name: CONTRACT_ADDRESS_FILE
               value: {{ .Values.contract.addressFile }}
             - name: FAULTY_CLIENTS

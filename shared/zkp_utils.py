@@ -19,10 +19,20 @@ def generate_proof(parameters, client_id, dataset_size=0):
     expected_hash = secret_chunk**3 + secret_chunk
 
     try:
+        import numpy as np
+        total_abs_weight = sum(np.sum(np.abs(p)) for p in parameters)
+        weight_magnitude = int(total_abs_weight * 100)
+        max_weight_magnitude = 20000000 # 20 Million limit
+        
         with tempfile.TemporaryDirectory() as tmpdirname:
             input_json = os.path.join(tmpdirname, "input.json")
             with open(input_json, "w") as f:
-                json.dump({"secret_dataset_chunk": secret_chunk, "expected_hash": expected_hash}, f)
+                json.dump({
+                    "secret_dataset_chunk": secret_chunk, 
+                    "expected_hash": expected_hash,
+                    "weight_magnitude": weight_magnitude,
+                    "max_weight_magnitude": max_weight_magnitude
+                }, f)
             
             proof_json = os.path.join(tmpdirname, "proof.json")
             public_json = os.path.join(tmpdirname, "public.json")

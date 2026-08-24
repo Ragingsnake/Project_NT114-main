@@ -1,0 +1,19 @@
+name: Destroy Azure FL Infrastructure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Destroy Azure Resource Group
+        run: |
+          pwsh ./scripts/azure/4_destroy_rg.ps1

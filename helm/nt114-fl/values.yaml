@@ -1,12 +1,14 @@
 namespace: nt114-fl
 
-image:
-  repository: YOUR_ACR_NAME.azurecr.io/project-nt114
-  tag: latest
-  pullPolicy: IfNotPresent
+images:
+  server: docker.io/ragingsnake/fl-server:latest
+  client: docker.io/ragingsnake/fl-client:latest
+  blockchain: docker.io/ragingsnake/fl-blockchain:latest
+  zkpNode: docker.io/ragingsnake/fl-zkp-node:latest
+  pullPolicy: Always
 
 ganache:
-  image: ghcr.io/foundry-rs/foundry:latest
+  image: trufflesuite/ganache:v7.9.2
   chainId: "1337"
   mnemonic: "test test test test test test test test test test test junk"
 
@@ -16,22 +18,15 @@ ipfs:
 storage:
   className: azurefile-csi
   resultsSize: 10Gi
-  ipfsSize: 10Gi
-  ipfsUsePvc: false
-
-contract:
-  artifact: /app/build/contracts/Reputation.json
-  addressFile: /results/runtime/reputation-address.json
 
 fl:
   serverPort: 8080
   clientCount: 5
   splitType: non_iid
-  faultyClients: ""
+
+attackMode: "normal"
+malicious: "false"
 
 plot:
   enabled: false
   mode: non_iid
-
-resultsViewer:
-  enabled: true

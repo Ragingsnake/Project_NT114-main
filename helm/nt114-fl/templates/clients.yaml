@@ -30,13 +30,18 @@ spec:
               mountPath: /results
       containers:
         - name: fl-client-{{ $clientId }}
-          image: {{ include "nt114-fl.appImage" $root }}
-          imagePullPolicy: {{ $root.Values.image.pullPolicy }}
-          command: ["python", "fl_client.py", "{{ $clientId }}", "{{ $root.Values.fl.splitType }}"]
+          image: {{ $root.Values.images.client }}
+          imagePullPolicy: {{ $root.Values.images.pullPolicy }}
+          env:
+            - name: ATTACK_MODE
+              value: {{ $root.Values.attackMode | quote }}
+            - name: MALICIOUS
+              value: {{ $root.Values.malicious | quote }}
           envFrom:
             - configMapRef:
                 name: fl-config
-          env:
+            - name: ZKP_NODE_URL
+              value: "http://fl-zkp-node:8081"
             - name: CLIENT_ID
               value: "{{ $clientId }}"
             - name: SPLIT_TYPE

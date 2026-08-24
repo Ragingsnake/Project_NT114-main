@@ -28,10 +28,11 @@ def generate_proof(parameters, client_id, dataset_size=0):
             public_json = os.path.join(tmpdirname, "public.json")
             
             subprocess.run([
-                "snarkjs", "groth16", "prove",
-                "zkp/circuit_final.zkey",
+                "snarkjs", "groth16", "fullprove",
+                input_json,
                 "zkp/dataset_proof.wasm",
-                input_json, proof_json, public_json
+                "zkp/circuit_final.zkey",
+                proof_json, public_json
             ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             
             with open(proof_json, "r") as f:

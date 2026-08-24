@@ -22,7 +22,14 @@ class FlowerClient(fl.client.NumPyClient):
         
         self.model = CNN(num_classes=62).to(DEVICE)  # EMNIST ByClass
         
-        self.malicious = os.getenv("MALICIOUS", "false").lower() == "true"
+        self.malicious_env = os.getenv("MALICIOUS", "false").lower() == "true"
+        
+        faulty_env = os.getenv("FAULTY_CLIENTS", "")
+        faulty_clients = [int(x) for x in faulty_env.split(",") if x.strip()]
+        self.is_faulty = self.client_id in faulty_clients
+        
+        self.malicious = self.malicious_env and self.is_faulty
+
         self.trainloader, self.testloader = load_client_data(client_id, split_type, malicious=self.malicious)
         self.criterion = nn.CrossEntropyLoss()
 

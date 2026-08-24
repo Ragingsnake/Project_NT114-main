@@ -24,7 +24,7 @@ fl:
   serverPort: 8080
   clientCount: 5
   splitType: non_iid
-  faultyClients: "0"
+  faultyClients: "5"
 
 contract:
   addressFile: "/results/reputation-address.json"

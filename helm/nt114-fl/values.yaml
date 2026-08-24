@@ -31,3 +31,6 @@ rounds: 25
 plot:
   enabled: false
   mode: non_iid
+
+resultsViewer:
+  enabled: false

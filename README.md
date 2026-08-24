@@ -4,7 +4,7 @@ A secure, decentralized Federated Learning (FL) architecture that leverages **Bl
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
 Traditional Federated Learning relies on a trusted central server and is highly vulnerable to malicious clients uploading poisoned models (e.g., Backdoor Attacks, Label Flipping, Scaling Attacks). 
 
@@ -17,19 +17,18 @@ This project solves those vulnerabilities using a multi-layered defense:
 3. **Blockchain Reputation System (Second Line of Defense):**
    The central aggregator validates updates using Cosine Similarity and Interquartile Range (IQR) analysis. Malicious updates (e.g., sneaky label-flipping) are rejected, and the client's reputation is permanently slashed on the Ethereum blockchain via Smart Contracts.
 
-## 🛡 Attack Scenarios & Defenses
+## Attack Scenarios & Defenses
 
 This repository features built-in adversarial simulation. You can deploy the clients in 4 different ATTACK_MODEs:
 
-* 
-ormal: Honest local training.
+* Normal: Honest local training.
 * label_flip: Clients flip the sign of their weights to degrade the global model. Caught by the **Blockchain Reputation System**.
-* yzantine: Clients send aggressive Gaussian noise. Caught by the **Blockchain Reputation System**.
+* Byzantine: Clients send aggressive Gaussian noise. Caught by the **Blockchain Reputation System**.
 * zkp_block: Clients maliciously scale their weights massively. Caught instantly by the **ZKP Node** (fails to generate a valid cryptographic proof).
 
 ---
 
-## 💻 Local Deployment (Docker Compose)
+## Local Deployment (Docker Compose)
 
 The entire stack is fully modularized and containerized. 
 
@@ -40,58 +39,16 @@ The entire stack is fully modularized and containerized.
 ### Running the Stack
 Use the provided PowerShell manager script to control the local lifecycle:
 
-`powershell
-# Run a normal, honest FL session
+```powershell
+## Run a normal, honest FL session
 .\scripts\powershell\manage.ps1 -Command start-normal
 
-# Run the malicious attack demo (Clients 4 & 5 turn adversarial)
+## Run the malicious attack demo (Clients 4 & 5 turn adversarial)
 .\scripts\powershell\manage.ps1 -Command start-attack
 
-# View real-time logs (watch the Server block the attackers!)
+## View real-time logs (watch the Server block the attackers!)
 .\scripts\powershell\manage.ps1 -Command logs
 
-# Stop and clean up volumes
+## Stop and clean up volumes
 .\scripts\powershell\manage.ps1 -Command stop
-`
-
----
-
-## ☁️ Cloud Deployment (Azure Kubernetes Service)
-
-If you want to train on the cloud (e.g., using your Azure for Students credits) without burning your local CPU or GitHub Action limits, we provide a fully automated **2-Node AKS Deployment Workflow**.
-
-All cloud scripts are located in scripts/azure/:
-
-1. **Provision Infrastructure:**
-   `powershell
-   .\scripts\azure\1_provision_aks.ps1
-   `
-   Creates the Resource Group and a 2-Node AKS cluster, automatically mapping your kubeconfig.
-
-2. **Launch Attack Scenario:**
-   `powershell
-   .\scripts\azure\2_run_test_aks.ps1 -AttackMode zkp_block
-   `
-   Uses Helm to deploy the Blockchain, IPFS, ZKP Node, Server, and 5 Clients directly to Kubernetes. (Available modes: 
-ormal, yzantine, label_flip, zkp_block).
-
-3. **Fetch Charts & Metrics:**
-   `powershell
-   .\scripts\azure\3_get_results_aks.ps1
-   `
-   Executes the plotting scripts directly inside the AKS cluster and seamlessly downloads your JSON history and Stacked Bar Charts locally to ./az_results/.
-
-4. **Cleanup:**
-   `powershell
-   .\scripts\azure\4_destroy_rg.ps1
-   `
-   Instantly destroys the Azure resources to halt billing.
-
----
-
-## 🚀 GitHub Actions CI/CD
-
-Prefer clickable buttons? We've wrapped the AKS deployment scripts into **Manual Dispatch Workflows**.
-Go to the **Actions** tab in GitHub to easily Provision, Dispatch Attacks, Fetch Results (via Artifacts), and Destroy the cluster right from your browser!
-
-*(Requires setting AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_SUBSCRIPTION_ID, and AZURE_TENANT_ID in your repository secrets).*
+```

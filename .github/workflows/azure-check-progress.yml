@@ -19,7 +19,7 @@ jobs:
           az aks get-credentials --resource-group FL-ZKP-RG --name fl-zkp-aks --overwrite-existing
           
           echo "Finding FL Server Pod..."
-          POD_NAME=$(kubectl get pods -l app=fl-server -o jsonpath='{.items[0].metadata.name}')
+          POD_NAME=$(kubectl get pods -n nt114-fl -l app=fl-server -o jsonpath='{.items[0].metadata.name}')
           
           if [ -z "$POD_NAME" ]; then
             echo "Server pod not found. Is the cluster running?"
@@ -28,8 +28,8 @@ jobs:
           
           echo "Checking progress from $POD_NAME..."
           echo "----------------------------------------"
-          kubectl logs $POD_NAME --tail 200
+          kubectl logs $POD_NAME -n nt114-fl --tail 200
           echo "----------------------------------------"
           
           echo "Getting pod status..."
-          kubectl get pods
+          kubectl get pods -n nt114-fl

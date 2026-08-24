@@ -44,6 +44,8 @@ spec:
               value: /results/history
             - name: RESULTS_DIR
               value: /results
+            - name: ROUNDS
+              value: {{ .Values.rounds | quote }}
           ports:
             - containerPort: {{ .Values.fl.serverPort }}
           volumeMounts:

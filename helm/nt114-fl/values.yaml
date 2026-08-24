@@ -26,6 +26,7 @@ fl:
 
 attackMode: "normal"
 malicious: "false"
+rounds: 25
 
 plot:
   enabled: false

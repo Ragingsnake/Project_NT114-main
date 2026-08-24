@@ -13,6 +13,11 @@ on:
           - byzantine
           - label_flip
           - zkp_block
+      training_rounds:
+        description: 'Number of training rounds'
+        required: true
+        type: string
+        default: '25'
 
 jobs:
   run-attack:
@@ -33,4 +38,4 @@ jobs:
           
           az aks get-credentials --resource-group FL-ZKP-RG --name fl-zkp-aks --overwrite-existing
           
-          pwsh ./scripts/azure/2_run_test_aks.ps1 -AttackMode ${{ github.event.inputs.attack_mode }}
+          pwsh ./scripts/azure/2_run_test_aks.ps1 -attackMode ${{ github.event.inputs.attack_mode }} -rounds ${{ github.event.inputs.training_rounds }}

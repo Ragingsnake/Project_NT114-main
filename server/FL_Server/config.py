@@ -1,4 +1,5 @@
-ROUNDS = 25
+import os
+ROUNDS = int(os.environ.get("ROUNDS", 25))
 NUM_CLIENTS = 5
 
 LR = 0.0007

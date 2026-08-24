@@ -1,0 +1,35 @@
+name: Check FL Progress
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-progress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
+      - name: Fetch and display FL Server Logs
+        run: |
+          az aks get-credentials --resource-group FL-ZKP-RG --name fl-zkp-aks --overwrite-existing
+          
+          echo "Finding FL Server Pod..."
+          POD_NAME=$(kubectl get pods -l app=fl-server -o jsonpath='{.items[0].metadata.name}')
+          
+          if [ -z "$POD_NAME" ]; then
+            echo "Server pod not found. Is the cluster running?"
+            exit 1
+          fi
+          
+          echo "Checking progress from $POD_NAME..."
+          echo "----------------------------------------"
+          kubectl logs $POD_NAME --tail 200
+          echo "----------------------------------------"
+          
+          echo "Getting pod status..."
+          kubectl get pods

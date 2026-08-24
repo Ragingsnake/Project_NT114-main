@@ -18,7 +18,7 @@ spec:
       containers:
         - name: ganache
           image: {{ .Values.ganache.image }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
           command:
             - anvil
           args:

@@ -15,7 +15,7 @@ spec:
       containers:
         - name: plot
           image: {{ include "nt114-fl.appImage" . }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
           command: ["python", "plot_results.py"]
           env:
             - name: MODE

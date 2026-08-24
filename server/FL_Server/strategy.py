@@ -78,7 +78,13 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
 
             if not verified:
                 print(f"❌ ZKP FAILED for Client {cid}")
-                reputation_manager.update_reputation(cid, -1.0) 
+                reputation_manager.update_reputation(cid, -1.0)
+                info = {
+                    "test_acc": metrics.get("local_accuracy", 0),
+                    "test_loss": metrics.get("local_loss", 0),
+                    "train_time": metrics.get("train_time", 0)
+                }
+                self._update_client_history(cid, server_round, info, reputation_manager.get(cid))
                 # penalty_this_round.append(cid)
                 continue
 
@@ -132,6 +138,7 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
             if score < -0.4 or reputation < 0.2:
                 print(f"🚫 Skip client {cid} (score={score:.3f}, rep={reputation:.3f})")
                 penalty_clients.append(cid)
+                self._update_client_history(cid, server_round, info, reputation)
                 continue
 
             # ===== COMPUTE DELTA =====
@@ -145,6 +152,7 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
                 reputation *= 0.7
 
                 penalty_clients.append(cid)
+                self._update_client_history(cid, server_round, info, reputation)
                 continue
             
             # ===== COMPUTE REWARD =====    

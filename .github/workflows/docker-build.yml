@@ -13,6 +13,23 @@ on:
       - '.github/workflows/docker-build.yml'
       - 'requirements.txt'
   workflow_dispatch:
+    inputs:
+      build_client:
+        description: 'Force Build Client'
+        type: boolean
+        default: false
+      build_server:
+        description: 'Force Build Server'
+        type: boolean
+        default: false
+      build_zkp_node:
+        description: 'Force Build ZKP Node'
+        type: boolean
+        default: false
+      build_blockchain:
+        description: 'Force Build Blockchain'
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -54,7 +71,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Build and push ZKP Node
-        if: steps.filter.outputs.zkp_node == 'true'
+        if: steps.filter.outputs.zkp_node == 'true' || github.event.inputs.build_zkp_node == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -65,7 +82,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and push Client
-        if: steps.filter.outputs.client == 'true'
+        if: steps.filter.outputs.client == 'true' || github.event.inputs.build_client == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -76,7 +93,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and push Server
-        if: steps.filter.outputs.server == 'true'
+        if: steps.filter.outputs.server == 'true' || github.event.inputs.build_server == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -87,20 +104,20 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Setup Node.js
-        if: steps.filter.outputs.blockchain == 'true'
+        if: steps.filter.outputs.blockchain == 'true' || github.event.inputs.build_blockchain == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Compile Truffle Contracts
-        if: steps.filter.outputs.blockchain == 'true'
+        if: steps.filter.outputs.blockchain == 'true' || github.event.inputs.build_blockchain == 'true'
         run: |
           cd blockchain
           npm install
           npx truffle compile
 
       - name: Build and push Blockchain
-        if: steps.filter.outputs.blockchain == 'true'
+        if: steps.filter.outputs.blockchain == 'true' || github.event.inputs.build_blockchain == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .

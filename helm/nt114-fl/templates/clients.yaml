@@ -32,14 +32,14 @@ spec:
         - name: fl-client-{{ $clientId }}
           image: {{ $root.Values.images.client }}
           imagePullPolicy: {{ $root.Values.images.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: fl-config
           env:
             - name: ATTACK_MODE
               value: {{ $root.Values.attackMode | quote }}
             - name: MALICIOUS
               value: {{ $root.Values.malicious | quote }}
-          envFrom:
-            - configMapRef:
-                name: fl-config
             - name: ZKP_NODE_URL
               value: "http://fl-zkp-node:8081"
             - name: CLIENT_ID

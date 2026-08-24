@@ -3,3 +3,5 @@ ipfshttpclient
 matplotlib
 numpy
 web3
+requests
+flask

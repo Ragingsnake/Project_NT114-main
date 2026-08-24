@@ -71,7 +71,7 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
             print(f"\nClient {cid} update received")
 
             start = time.time()
-            verified = verify_proof(params, proof)
+            verified = verify_proof(params, proof, int(cid), fit_res.num_examples)
             round_verify_times.append(time.time() - start)
 
             if not verified:

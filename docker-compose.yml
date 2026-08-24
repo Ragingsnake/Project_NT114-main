@@ -2,13 +2,13 @@ services:
   ganache:
     image: trufflesuite/ganache:v7.9.2
     command:
-      - --host
-      - 0.0.0.0
-      - --port
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
       - "7545"
-      - --chain.chainId
+      - "--chain.chainId"
       - "1337"
-      - --wallet.mnemonic
+      - "--wallet.mnemonic"
       - "test test test test test test test test test test test junk"
     ports:
       - "7545:7545"
@@ -25,38 +25,49 @@ services:
       - ipfs-data:/data/ipfs
       - ipfs-export:/export
 
+  fl-zkp-node:
+    image: ragingsnake/fl-zkp-node:latest
+    environment:
+      PORT: "8081"
+    ports:
+      - "8081:8081"
+
   contract-init:
-    build: .
-    command: ["deploy_contract.py"]
+    image: ragingsnake/fl-blockchain:latest
     environment:
       WEB3_PROVIDER_URI: http://ganache:7545
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
+      CONTRACT_ARTIFACT: /app/blockchain/build/contracts/Reputation.json
     volumes:
-      - .:/app
+      - shared-runtime:/app/runtime
     depends_on:
       - ganache
-    profiles:
-      - bootstrap
+    restart: "no"
 
   fl-server:
-    build: .
-    command: ["fl_server.py"]
+    image: ragingsnake/fl-server:latest
     environment:
       WEB3_PROVIDER_URI: http://ganache:7545
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
-      FAULTY_CLIENTS: ${FAULTY_CLIENTS:-}
+      FAULTY_CLIENTS: "${FAULTY_CLIENTS:-}"
+      ZKP_NODE_URL: http://fl-zkp-node:8081
     volumes:
-      - .:/app
+      - shared-runtime:/app/runtime
+      - ./output/history:/app/history
+      - ./output/plots:/app/plots
     ports:
       - "8080:8080"
     depends_on:
-      - ganache
-      - ipfs
+      contract-init:
+        condition: service_completed_successfully
+      ipfs:
+        condition: service_started
+      fl-zkp-node:
+        condition: service_started
 
   client-1:
-    build: .
-    command: ["fl_client.py", "1", "non_iid"]
+    image: ragingsnake/fl-client:latest
     environment:
       CLIENT_ID: "1"
       SPLIT_TYPE: non_iid
@@ -64,15 +75,14 @@ services:
       WEB3_PROVIDER_URI: http://ganache:7545
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
-      FAULTY_CLIENTS: ${FAULTY_CLIENTS:-}
+      ZKP_NODE_URL: http://fl-zkp-node:8081
     volumes:
-      - .:/app
+      - shared-runtime:/app/runtime
     depends_on:
       - fl-server
 
   client-2:
-    build: .
-    command: ["fl_client.py", "2", "non_iid"]
+    image: ragingsnake/fl-client:latest
     environment:
       CLIENT_ID: "2"
       SPLIT_TYPE: non_iid
@@ -80,15 +90,14 @@ services:
       WEB3_PROVIDER_URI: http://ganache:7545
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
-      FAULTY_CLIENTS: ${FAULTY_CLIENTS:-}
+      ZKP_NODE_URL: http://fl-zkp-node:8081
     volumes:
-      - .:/app
+      - shared-runtime:/app/runtime
     depends_on:
       - fl-server
 
   client-3:
-    build: .
-    command: ["fl_client.py", "3", "non_iid"]
+    image: ragingsnake/fl-client:latest
     environment:
       CLIENT_ID: "3"
       SPLIT_TYPE: non_iid
@@ -96,15 +105,14 @@ services:
       WEB3_PROVIDER_URI: http://ganache:7545
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
-      FAULTY_CLIENTS: ${FAULTY_CLIENTS:-}
+      ZKP_NODE_URL: http://fl-zkp-node:8081
     volumes:
-      - .:/app
+      - shared-runtime:/app/runtime
     depends_on:
       - fl-server
 
   client-4:
-    build: .
-    command: ["fl_client.py", "4", "non_iid"]
+    image: ragingsnake/fl-client:latest
     environment:
       CLIENT_ID: "4"
       SPLIT_TYPE: non_iid
@@ -112,15 +120,15 @@ services:
       WEB3_PROVIDER_URI: http://ganache:7545
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
-      FAULTY_CLIENTS: ${FAULTY_CLIENTS:-}
+      ZKP_NODE_URL: http://fl-zkp-node:8081
+      MALICIOUS: "${MALICIOUS:-false}"
     volumes:
-      - .:/app
+      - shared-runtime:/app/runtime
     depends_on:
       - fl-server
 
   client-5:
-    build: .
-    command: ["fl_client.py", "5", "non_iid"]
+    image: ragingsnake/fl-client:latest
     environment:
       CLIENT_ID: "5"
       SPLIT_TYPE: non_iid
@@ -128,12 +136,13 @@ services:
       WEB3_PROVIDER_URI: http://ganache:7545
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
-      FAULTY_CLIENTS: ${FAULTY_CLIENTS:-}
+      ZKP_NODE_URL: http://fl-zkp-node:8081
     volumes:
-      - .:/app
+      - shared-runtime:/app/runtime
     depends_on:
       - fl-server
 
 volumes:
   ipfs-data:
   ipfs-export:
+  shared-runtime:

@@ -1,0 +1,38 @@
+FROM node:18-slim AS zkp-builder
+WORKDIR /app
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG http_proxy
+ARG https_proxy
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN npm install -g snarkjs
+RUN curl -Lo circom https://github.com/iden3/circom/releases/latest/download/circom-linux-amd64 \
+    && chmod +x circom
+COPY zkp/dataset_proof.circom ./
+RUN ./circom dataset_proof.circom --r1cs --wasm --sym
+RUN snarkjs powersoftau new bn128 12 pot12_0000.ptau -v
+RUN snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First" -v -e="entropy"
+RUN snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v
+RUN snarkjs groth16 setup dataset_proof.r1cs pot12_final.ptau dataset_proof_0000.zkey
+RUN snarkjs zkey contribute dataset_proof_0000.zkey circuit_final.zkey --name="Second" -v -e="entropy2"
+RUN snarkjs zkey export verificationkey circuit_final.zkey verification_key.json
+
+FROM python:3.11-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
+WORKDIR /app
+# Copy node binary + snarkjs from builder — bypasses Debian npm proxy bug entirely
+COPY --from=zkp-builder /usr/local/bin/node /usr/local/bin/node
+COPY --from=zkp-builder /usr/local/lib/node_modules/snarkjs /usr/local/lib/node_modules/snarkjs
+RUN printf '#!/bin/sh\nexec /usr/local/bin/node /usr/local/lib/node_modules/snarkjs/build/cli.cjs "$@"\n' \
+    > /usr/local/bin/snarkjs && chmod +x /usr/local/bin/snarkjs
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt ./
+RUN pip install --upgrade pip \
+    && pip install --index-url https://download.pytorch.org/whl/cpu torch \
+    && pip install -r requirements.txt
+COPY . .
+COPY --from=zkp-builder /app/dataset_proof_js/dataset_proof.wasm ./zkp/
+COPY --from=zkp-builder /app/circuit_final.zkey ./zkp/
+COPY --from=zkp-builder /app/verification_key.json ./zkp/
+RUN mkdir -p history models/clients plots runtime
+ENTRYPOINT ["python", "src/fl_client.py"]

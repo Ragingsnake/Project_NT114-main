@@ -22,7 +22,8 @@ class FlowerClient(fl.client.NumPyClient):
         
         self.model = CNN(num_classes=62).to(DEVICE)  # EMNIST ByClass
         
-        self.trainloader, self.testloader = load_client_data(client_id, split_type)
+        self.malicious = os.getenv("MALICIOUS", "false").lower() == "true"
+        self.trainloader, self.testloader = load_client_data(client_id, split_type, malicious=self.malicious)
         self.criterion = nn.CrossEntropyLoss()
 
     def get_parameters(self, config):
@@ -86,7 +87,7 @@ class FlowerClient(fl.client.NumPyClient):
             params = corrupt_parameters(params)
             print("💣 Sent corrupted update")
 
-        proof = generate_proof(params)
+        proof = generate_proof(params, self.client_id, len(self.trainloader.dataset))
         proof_str = json.dumps(proof)
         proof_hash = hashlib.sha256((proof_str + cid).encode()).hexdigest()
         try:

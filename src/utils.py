@@ -5,8 +5,8 @@ import numpy as np
 
 CACHE = {}
 
-def load_client_data(client_id, split_type="non_iid", batch_size=128):
-    key = f"{split_type}_{client_id}"
+def load_client_data(client_id, split_type="non_iid", batch_size=128, malicious=False):
+    key = f"{split_type}_{client_id}_{malicious}"
     
     if key in CACHE:
         return CACHE[key]
@@ -39,6 +39,10 @@ def load_client_data(client_id, split_type="non_iid", batch_size=128):
         y = torch.tensor(y_processed, dtype=torch.long)
     else:
         y = torch.tensor(y, dtype=torch.long)
+
+    if malicious:
+        print(f"?? Client {client_id} is launching a LABEL FLIP attack!")
+        y = (61 - y)
 
     dataset = TensorDataset(X, y)
     

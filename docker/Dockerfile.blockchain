@@ -1,0 +1,21 @@
+FROM node:18-slim AS builder
+WORKDIR /app
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG http_proxy
+ARG https_proxy
+COPY blockchain/package*.json ./
+RUN npm install
+COPY blockchain/ ./
+RUN npx truffle compile
+
+FROM python:3.11-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt ./
+RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY . .
+COPY --from=builder /app/build/contracts/ ./blockchain/build/contracts/
+RUN mkdir -p runtime
+ENTRYPOINT ["python", "src/deploy_contract.py"]

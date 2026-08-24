@@ -41,7 +41,7 @@ def main():
             {
                 "address": receipt.contractAddress,
                 "provider": WEB3_PROVIDER_URI,
-                "artifact": str(ARTIFACT_PATH),
+                "abi": artifact["abi"],
             },
             f,
             indent=2,

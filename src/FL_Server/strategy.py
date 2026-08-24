@@ -49,7 +49,7 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
     def _fit_config(self, server_round):
         return {
             "server_round": server_round,
-            "faulty_clients": self.faulty_clients,
+            "faulty_clients": ",".join(map(str, self.faulty_clients)),
         }
 
     def aggregate_fit(self, server_round, results, failures):

@@ -48,6 +48,17 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Compile Truffle Contracts
+        run: |
+          cd blockchain
+          npm install
+          npx truffle compile
+
       - name: Build and push Blockchain
         uses: docker/build-push-action@v6
         with:

@@ -25,9 +25,12 @@ COPY --from=zkp-builder /usr/local/bin/node /usr/local/bin/node
 COPY --from=zkp-builder /usr/local/lib/node_modules/snarkjs /usr/local/lib/node_modules/snarkjs
 RUN printf '#!/bin/sh\nexec /usr/local/bin/node /usr/local/lib/node_modules/snarkjs/build/cli.cjs "$@"\n' \
     > /usr/local/bin/snarkjs && chmod +x /usr/local/bin/snarkjs
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc \
+    && pip install --upgrade pip && pip install -r requirements.txt \
+    && apt-get purge -y build-essential gcc \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
 COPY . .
 COPY --from=zkp-builder /app/dataset_proof_js/dataset_proof.wasm ./zkp/
 COPY --from=zkp-builder /app/circuit_final.zkey ./zkp/

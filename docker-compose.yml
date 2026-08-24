@@ -28,6 +28,8 @@ services:
   fl-zkp-node:
     image: ragingsnake/fl-zkp-node:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       PORT: "8081"
     ports:
       - "8081:8081"
@@ -35,6 +37,8 @@ services:
   contract-init:
     image: ragingsnake/fl-blockchain:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       WEB3_PROVIDER_URI: http://ganache:7545
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
       CONTRACT_ARTIFACT: /app/blockchain/build/contracts/Reputation.json
@@ -47,6 +51,8 @@ services:
   fl-server:
     image: ragingsnake/fl-server:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       WEB3_PROVIDER_URI: http://ganache:7545
       IPFS_API_ADDR: /dns4/ipfs/tcp/5001/http
       CONTRACT_ADDRESS_FILE: /app/runtime/reputation-address.json
@@ -69,6 +75,8 @@ services:
   client-1:
     image: ragingsnake/fl-client:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       CLIENT_ID: "1"
       SPLIT_TYPE: non_iid
       SERVER_ADDRESS: fl-server:8080
@@ -84,6 +92,8 @@ services:
   client-2:
     image: ragingsnake/fl-client:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       CLIENT_ID: "2"
       SPLIT_TYPE: non_iid
       SERVER_ADDRESS: fl-server:8080
@@ -99,6 +109,8 @@ services:
   client-3:
     image: ragingsnake/fl-client:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       CLIENT_ID: "3"
       SPLIT_TYPE: non_iid
       SERVER_ADDRESS: fl-server:8080
@@ -114,6 +126,8 @@ services:
   client-4:
     image: ragingsnake/fl-client:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       CLIENT_ID: "4"
       SPLIT_TYPE: non_iid
       SERVER_ADDRESS: fl-server:8080
@@ -130,6 +144,8 @@ services:
   client-5:
     image: ragingsnake/fl-client:latest
     environment:
+      NO_PROXY: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
+      no_proxy: "ganache,ipfs,fl-server,fl-zkp-node,contract-init,localhost,127.0.0.1"
       CLIENT_ID: "5"
       SPLIT_TYPE: non_iid
       SERVER_ADDRESS: fl-server:8080

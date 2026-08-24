@@ -1,11 +1,15 @@
 FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt ./
-RUN pip install --upgrade pip \
+# Install dependencies then PURGE compilers to save ~300MB
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc \
+    && pip install --upgrade pip \
     && pip install --index-url https://download.pytorch.org/whl/cpu torch \
-    && pip install -r requirements.txt
+    && pip install -r requirements.txt \
+    && apt-get purge -y build-essential gcc \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
 COPY . .
 RUN mkdir -p history models/clients plots runtime
 ENTRYPOINT ["python", "src/fl_server.py"]

@@ -5,14 +5,14 @@ import hashlib
 import json
 import os
 
-from model import CNN
-from utils import load_client_data
-from ipfs_utils import upload_to_ipfs
-from zkp_utils import generate_proof
-from blockchain import submit_update
-from FL_Client.train import train
-from FL_Client.evaluate import evaluate
-from FL_Client.faulty import corrupt_parameters
+from shared.model import CNN
+from shared.utils import load_client_data
+from shared.ipfs_utils import upload_to_ipfs
+from shared.zkp_utils import generate_proof
+from shared.blockchain import submit_update
+from client.FL_Client.train import train
+from client.FL_Client.evaluate import evaluate
+from client.FL_Client.faulty import corrupt_parameters
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

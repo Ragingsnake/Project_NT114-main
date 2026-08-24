@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
     && apt-get purge -y build-essential gcc \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
-COPY . .
+COPY shared/ ./shared/
+COPY server/ ./server/
+COPY data_new/ ./data_new/
+ENV PYTHONPATH=/app
 RUN mkdir -p history models/clients plots runtime
-ENTRYPOINT ["python", "src/fl_server.py"]
+ENTRYPOINT ["python", "server/fl_server.py"]

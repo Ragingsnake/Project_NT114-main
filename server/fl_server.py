@@ -1,7 +1,7 @@
 import flwr as fl
-from FL_Server.strategy import SecureFLStrategy
-from FL_Server.strategy_fedavg import SimpleFLStrategy
-from FL_Server.config import ROUNDS
+from server.FL_Server.strategy import SecureFLStrategy
+from server.FL_Server.strategy_fedavg import SimpleFLStrategy
+from server.FL_Server.config import ROUNDS
 
 def main():
 

@@ -34,9 +34,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
     && apt-get purge -y build-essential gcc \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
-COPY . .
+COPY shared/ ./shared/
+COPY client/ ./client/
+COPY data_new/ ./data_new/
+ENV PYTHONPATH=/app
 COPY --from=zkp-builder /app/dataset_proof_js/dataset_proof.wasm ./zkp/
 COPY --from=zkp-builder /app/circuit_final.zkey ./zkp/
 COPY --from=zkp-builder /app/verification_key.json ./zkp/
 RUN mkdir -p history models/clients plots runtime
-ENTRYPOINT ["python", "src/fl_client.py"]
+ENTRYPOINT ["python", "client/fl_client.py"]

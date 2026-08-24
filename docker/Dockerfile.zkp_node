@@ -31,9 +31,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
     && apt-get purge -y build-essential gcc \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
-COPY . .
+COPY shared/ ./shared/
+COPY zkp_node/ ./zkp_node/
+ENV PYTHONPATH=/app
 COPY --from=zkp-builder /app/dataset_proof_js/dataset_proof.wasm ./zkp/
 COPY --from=zkp-builder /app/circuit_final.zkey ./zkp/
 COPY --from=zkp-builder /app/verification_key.json ./zkp/
 RUN mkdir -p runtime
-ENTRYPOINT ["python", "src/fl_zkp_node.py"]
+ENTRYPOINT ["python", "zkp_node/fl_zkp_node.py"]

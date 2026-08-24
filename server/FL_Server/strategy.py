@@ -6,15 +6,15 @@ import os
 
 from flwr.common import parameters_to_ndarrays, ndarrays_to_parameters
 
-from blockchain import verify_update
-from reputation import evaluate_clients
-from zkp_utils import verify_proof
-from model import CNN
+from shared.blockchain import verify_update
+from shared.reputation import evaluate_clients
+from shared.zkp_utils import verify_proof
+from shared.model import CNN
 
-from FL_Server.config import NUM_CLIENTS, BASE_LAMBDA, MAX_LAMBDA
-from FL_Server.reputation import reputation_manager
-from FL_Server.defense import compute_delta
-from FL_Server.fedadam import fedadam_update
+from server.FL_Server.config import NUM_CLIENTS, BASE_LAMBDA, MAX_LAMBDA
+from server.FL_Server.reputation import reputation_manager
+from server.FL_Server.defense import compute_delta
+from server.FL_Server.fedadam import fedadam_update
 
 os.makedirs("history", exist_ok=True)
 
@@ -138,11 +138,12 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
             # ===== IQR OUTLIER DEFENSE =====
             if delta < lower or delta > upper:
 
-                print(f"⚠ Outlier Client {cid} (Δ={delta:.4f})")
+                print(f"🚨 Outlier Client {cid} (Δ={delta:.4f})")
 
                 reputation *= 0.7
 
                 penalty_clients.append(cid)
+                continue
             
             # ===== COMPUTE REWARD =====    
             gamma = np.exp(-BASE_LAMBDA * delta)

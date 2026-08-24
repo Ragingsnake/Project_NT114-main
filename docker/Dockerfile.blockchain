@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . .
+COPY blockchain/ ./blockchain/
+ENV PYTHONPATH=/app
 RUN mkdir -p runtime
-ENTRYPOINT ["python", "src/deploy_contract.py"]
+ENTRYPOINT ["python", "blockchain/deploy_contract.py"]

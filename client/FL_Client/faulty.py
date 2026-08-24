@@ -32,12 +32,10 @@ def is_faulty_client(client_id, round_num):
     return client_id in faulty_clients
 
 def corrupt_parameters(params):
-
     corrupted = []
-
     for p in params:
-        noise = np.random.normal(0, 0.01, p.shape)
-
-        corrupted.append(p + noise)
-
+        # Instead of tiny 0.01 noise, we heavily scramble the weights and invert them
+        # This simulates a strong poisoning attack (or severe label flipping equivalent)
+        noise = np.random.normal(0, 5.0, p.shape)
+        corrupted.append((p * -5.0) + noise)
     return corrupted

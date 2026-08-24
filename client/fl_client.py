@@ -2,7 +2,7 @@ import os
 import sys
 
 import flwr as fl
-from FL_Client.Flower import FlowerClient
+from client.FL_Client.Flower import FlowerClient
 
 if __name__ == "__main__":
 

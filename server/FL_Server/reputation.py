@@ -1,5 +1,5 @@
 import numpy as np
-from FL_Server.config import REWARD_ALPHA, REP_MIN, REP_MAX, BASE_REWARD
+from server.FL_Server.config import REWARD_ALPHA, REP_MIN, REP_MAX, BASE_REWARD
 
 class ReputationManager:
 

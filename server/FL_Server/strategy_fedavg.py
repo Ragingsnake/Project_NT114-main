@@ -7,7 +7,7 @@ import os
 from flwr.common import parameters_to_ndarrays, ndarrays_to_parameters
 from flwr.server.strategy.aggregate import aggregate
 
-from FL_Server.config import NUM_CLIENTS
+from server.FL_Server.config import NUM_CLIENTS
 
 os.makedirs("history", exist_ok=True)
 

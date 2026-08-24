@@ -3,6 +3,15 @@ name: Build and Push Docker Images
 on:
   push:
     branches: [main]
+    paths:
+      - 'client/**'
+      - 'server/**'
+      - 'zkp_node/**'
+      - 'blockchain/**'
+      - 'shared/**'
+      - 'docker/**'
+      - '.github/workflows/docker-build.yml'
+      - 'requirements.txt'
   workflow_dispatch:
 
 jobs:
@@ -10,6 +19,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'client/**'
+              - 'shared/**'
+              - 'data_new/**'
+              - 'docker/Dockerfile.client'
+              - 'requirements.txt'
+            server:
+              - 'server/**'
+              - 'shared/**'
+              - 'data_new/**'
+              - 'docker/Dockerfile.server'
+              - 'requirements.txt'
+            zkp_node:
+              - 'zkp_node/**'
+              - 'shared/**'
+              - 'docker/Dockerfile.zkp_node'
+              - 'requirements.txt'
+            blockchain:
+              - 'blockchain/**'
+              - 'docker/Dockerfile.blockchain'
+              - 'requirements.txt'
 
       - uses: docker/login-action@v3
         with:
@@ -19,6 +54,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Build and push ZKP Node
+        if: steps.filter.outputs.zkp_node == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -29,6 +65,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and push Client
+        if: steps.filter.outputs.client == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -39,6 +76,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and push Server
+        if: steps.filter.outputs.server == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -49,17 +87,20 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Setup Node.js
+        if: steps.filter.outputs.blockchain == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Compile Truffle Contracts
+        if: steps.filter.outputs.blockchain == 'true'
         run: |
           cd blockchain
           npm install
           npx truffle compile
 
       - name: Build and push Blockchain
+        if: steps.filter.outputs.blockchain == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .

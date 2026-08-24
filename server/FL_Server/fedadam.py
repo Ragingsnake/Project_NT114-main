@@ -1,5 +1,5 @@
 import numpy as np
-from FL_Server.config import LR, BETA1, BETA2, EPS
+from server.FL_Server.config import LR, BETA1, BETA2, EPS
 
 class FedAdamState:
 

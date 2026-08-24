@@ -18,11 +18,17 @@ ipfs:
 storage:
   className: azurefile-csi
   resultsSize: 10Gi
+  ipfsUsePvc: false
 
 fl:
   serverPort: 8080
   clientCount: 5
   splitType: non_iid
+  faultyClients: "0"
+
+contract:
+  addressFile: "/results/reputation-address.json"
+  artifact: "/app/blockchain/build/contracts/Reputation.json"
 
 attackMode: "normal"
 malicious: "false"

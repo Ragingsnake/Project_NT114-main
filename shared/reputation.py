@@ -94,7 +94,7 @@ def evaluate_clients(global_weights, client_weights_dict, clients_info, rejected
         if sim < 0.1 or (rejected_clients and str(cid) in rejected_clients):
             combined_score = -1.0
             status = "rejected"
-        elif delta < lower or delta > upper:
+        elif delta > upper:
             combined_score -= 0.2
             status = "outlier"
             

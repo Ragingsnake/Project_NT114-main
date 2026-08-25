@@ -150,6 +150,12 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
                 print(f"🚨 Outlier Client {cid} (Δ={delta:.4f})")
 
                 reputation *= 0.7
+                
+                # Save the penalized reputation to disk
+                from shared.reputation import load_reputation, save_reputation
+                rep_dict = load_reputation()
+                rep_dict[str(cid)] = reputation
+                save_reputation(rep_dict)
 
                 penalty_clients.append(cid)
                 self._update_client_history(cid, server_round, info, reputation)

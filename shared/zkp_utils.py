@@ -57,7 +57,7 @@ def generate_proof(parameters, client_id, dataset_size=0):
                 "dataset_size": dataset_size,
                 "proof": proof,
                 "public_signals": public_signals
-            }, timeout=10)
+            }, timeout=60)
             response.raise_for_status()
             
             return {
@@ -74,13 +74,13 @@ def verify_proof(parameters, proof_data, client_id, dataset_size=0):
         
     model_hash = hash_model(parameters)
     try:
-        response = requests.post(f"{ZKP_NODE_URL}/verify", json={
-            "client_id": client_id,
-            "model_hash": model_hash,
-            "dataset_size": dataset_size,
-            "proof": proof_data.get("proof"),
-            "public_signals": proof_data.get("public_signals")
-        }, timeout=10)
+            response = requests.post(f"{ZKP_NODE_URL}/verify", json={
+                "client_id": client_id,
+                "model_hash": model_hash,
+                "dataset_size": dataset_size,
+                "proof": proof_data.get("proof"),
+                "public_signals": proof_data.get("public_signals")
+            }, timeout=60)
         response.raise_for_status()
         return response.json().get("valid", False)
     except Exception as e:

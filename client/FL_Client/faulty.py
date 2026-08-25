@@ -35,7 +35,7 @@ def corrupt_parameters(params):
             noise = np.random.normal(0, 0.01, p.shape)
             corrupted.append((p * -1.0) + noise)
         elif ATTACK_MODE == "byzantine":
-            corrupted.append(np.random.normal(0, 10.0, p.shape))
+            corrupted.append(np.random.normal(0, 3.0, p.shape))
         else:
             corrupted.append(p)
     return corrupted

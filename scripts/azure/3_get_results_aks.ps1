@@ -13,6 +13,9 @@ spec:
   - name: extractor
     image: ragingsnake/fl-server:latest
     command: ["sleep", "3600"]
+    env:
+    - name: RESULTS_DIR
+      value: /results
     volumeMounts:
     - name: results
       mountPath: /results
@@ -26,7 +29,7 @@ spec:
 $tempPodYaml | kubectl apply -f -
 
 Write-Host "Waiting for extractor pod to be ready..." -ForegroundColor Cyan
-kubectl wait --for=condition=Ready pod/fl-results-extractor -n nt114-fl --timeout=60s
+kubectl wait --for=condition=Ready pod/fl-results-extractor -n nt114-fl --timeout=120s
 
 Write-Host "Generating plots on the server..." -ForegroundColor Cyan
 kubectl exec -n nt114-fl fl-results-extractor -- python /app/shared/plot_results.py

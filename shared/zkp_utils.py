@@ -22,7 +22,7 @@ def generate_proof(parameters, client_id, dataset_size=0):
         import numpy as np
         total_abs_weight = sum(np.sum(np.abs(p)) for p in parameters)
         weight_magnitude = int(total_abs_weight * 100)
-        max_weight_magnitude = 500000000 # 500 Million limit
+        max_weight_magnitude = 5000000000 # 5 Billion limit
         
         with tempfile.TemporaryDirectory() as tmpdirname:
             input_json = os.path.join(tmpdirname, "input.json")

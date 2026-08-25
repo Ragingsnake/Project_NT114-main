@@ -23,6 +23,22 @@ def verify():
     if not proof or not public_signals or client_id is None:
         return jsonify({"error": "Missing parameters"}), 400
         
+    # FIX #2: Strictly verify the public signal matches the server policy
+    expected_limit = "5000000000"
+    if len(public_signals) < 2 or str(public_signals[1]) != expected_limit:
+        logger.warning(f"🚨 Client {client_id} attempted to bypass max_weight_magnitude limit! (Sent: {public_signals[1] if len(public_signals) > 1 else 'None'})")
+        return jsonify({"valid": False, "error": f"Invalid max_weight_magnitude. Expected {expected_limit}."})
+        
+    # FIX #3: Strictly verify the client identity public signal
+    try:
+        cid_int = int(client_id)
+        expected_hash = str(cid_int**3 + cid_int)
+        if str(public_signals[0]) != expected_hash:
+            logger.warning(f"🚨 Client {client_id} attempted identity spoofing! (Expected Hash: {expected_hash}, Sent: {public_signals[0]})")
+            return jsonify({"valid": False, "error": "Identity verification failed. Spoofed credentials."})
+    except ValueError:
+        return jsonify({"valid": False, "error": "Invalid client_id format."})
+        
     try:
         with tempfile.TemporaryDirectory() as tmpdirname:
             proof_json = os.path.join(tmpdirname, "proof.json")

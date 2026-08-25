@@ -67,14 +67,14 @@ contract Reputation {
         bool result
     ) public {
 
-        for (uint i = 0; i < updates.length; i++) {
-
+        for (uint i = updates.length; i > 0; i--) {
+            uint idx = i - 1;
             if (
-                updates[i].clientId == clientId &&
-                updates[i].round == round
+                updates[idx].clientId == clientId &&
+                updates[idx].round == round
             ) {
 
-                updates[i].verified = result;
+                updates[idx].verified = result;
 
                 if (result) {
                     reputation[clientId] += 1;

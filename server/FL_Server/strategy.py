@@ -145,7 +145,7 @@ class SecureFLStrategy(fl.server.strategy.FedAvg):
             delta = compute_delta(self.global_weights, info["params"])
 
             # ===== IQR OUTLIER DEFENSE =====
-            if delta < lower or delta > upper:
+            if delta > upper:
 
                 print(f"🚨 Outlier Client {cid} (Δ={delta:.4f})")
 

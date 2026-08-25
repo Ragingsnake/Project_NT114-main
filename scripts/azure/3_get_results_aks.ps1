@@ -1,23 +1,45 @@
 $ErrorActionPreference = 'Stop'
 
-Write-Host "Finding FL Server Pod..." -ForegroundColor Cyan
-$serverPod = kubectl get pods -n nt114-fl -l app=fl-server -o jsonpath='{.items[0].metadata.name}'
+Write-Host "Creating a temporary extractor pod to mount the results PVC..." -ForegroundColor Cyan
 
-if (-not $serverPod) {
-    Write-Host "Server pod not found. Is the cluster running?" -ForegroundColor Red
-    exit
-}
+$tempPodYaml = @"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fl-results-extractor
+  namespace: nt114-fl
+spec:
+  containers:
+  - name: extractor
+    image: ragingsnake/fl-server:latest
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: results
+      mountPath: /results
+  volumes:
+  - name: results
+    persistentVolumeClaim:
+      claimName: fl-results
+  restartPolicy: Never
+"@
+
+$tempPodYaml | kubectl apply -f -
+
+Write-Host "Waiting for extractor pod to be ready..." -ForegroundColor Cyan
+kubectl wait --for=condition=Ready pod/fl-results-extractor -n nt114-fl --timeout=60s
 
 Write-Host "Generating plots on the server..." -ForegroundColor Cyan
-# Because Helm mapped results to /results, the history and plots are inside /results!
-kubectl exec -n nt114-fl $serverPod -- python /app/shared/plot_results.py
+kubectl exec -n nt114-fl fl-results-extractor -- python /app/shared/plot_results.py
 
 Write-Host "Downloading results..." -ForegroundColor Cyan
 if (-not (Test-Path -Path "./az_results")) {
     New-Item -ItemType Directory -Path "./az_results" | Out-Null
 }
 
-kubectl cp -n nt114-fl "${serverPod}:/results/history" ./az_results/history
-kubectl cp -n nt114-fl "${serverPod}:/results/plots" ./az_results/plots
+kubectl cp -n nt114-fl "fl-results-extractor:/results/history" ./az_results/history
+kubectl cp -n nt114-fl "fl-results-extractor:/results/plots" ./az_results/plots
+
+Write-Host "Cleaning up extractor pod..." -ForegroundColor Cyan
+kubectl delete pod fl-results-extractor -n nt114-fl --ignore-not-found
 
 Write-Host "Done! Check the ./az_results folder." -ForegroundColor Green

@@ -29,10 +29,10 @@ spec:
 $tempPodYaml | kubectl apply -f -
 
 Write-Host "Waiting for extractor pod to be ready..." -ForegroundColor Cyan
-kubectl wait --for=condition=Ready pod/fl-results-extractor -n nt114-fl --timeout=120s
+kubectl wait --for=condition=Ready pod/fl-results-extractor -n nt114-fl --timeout=300s
 
 Write-Host "Generating plots on the server..." -ForegroundColor Cyan
-kubectl exec -n nt114-fl fl-results-extractor -- python /app/shared/plot_results.py
+kubectl exec -n nt114-fl fl-results-extractor -- sh -c "RESULTS_DIR=/results python /app/shared/plot_results.py"
 
 Write-Host "Downloading results..." -ForegroundColor Cyan
 if (-not (Test-Path -Path "./az_results")) {

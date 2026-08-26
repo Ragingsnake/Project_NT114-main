@@ -28,6 +28,7 @@ spec:
             - {{ .Values.ganache.chainId | quote }}
             - "--wallet.mnemonic"
             - {{ .Values.ganache.mnemonic | quote }}
+            - "--quiet"
           ports:
             - containerPort: 7545
 ---

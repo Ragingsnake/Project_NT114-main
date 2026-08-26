@@ -44,3 +44,7 @@ npm-debug.log
 
 # ===== Docker outputs =====
 output/
+
+#... SPECIAL
+ComNetSat_2026_KietDA_Nguyen.*
+ComNetSat_2026_KietDA_Nguyen/*

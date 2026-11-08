@@ -1,0 +1,636 @@
+\documentclass[conference, a4paper]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
+\usepackage{array}
+\usepackage{cite}
+\usepackage{tabularx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+
+
+% \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\usepackage[margin=0.7in]{geometry}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \documentclass[conference]{IEEEtran}
+% \IEEEoverridecommandlockouts
+% % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+% %Template version as of 6/27/2024
+
+% \renewcommand{\thesubsection}{\arabic{subsection})}
+
+% \usepackage{cite}
+% \usepackage{amsmath,amssymb,amsfonts}
+% \usepackage{algorithmic}
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+% \usepackage{tabularx}
+% \usepackage{graphicx}
+% \usepackage{textcomp}
+% \usepackage{xcolor}
+% \usepackage{algpseudocode}
+% \usepackage{algorithm}
+% \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Set \highlightrevisionstrue for reviewer inspection (BLUE text);
+% Set \highlightrevisionsfalse to turn all text black.
+\newif\ifhighlightrevisions
+\highlightrevisionstrue
+
+\ifhighlightrevisions
+  \newcommand{\revised}[1]{\textcolor{red}{#1}}
+  \newenvironment{revisedblock}{\color{red}}{}
+\else
+  \newcommand{\revised}[1]{#1}
+  \newenvironment{revisedblock}{}{}
+\fi
+% =========================================================================
+
+% \usepackage[left=1.62cm,right=1.62cm,top=1.9cm,bottom=1.05in]{geometry}
+\begin{document}
+
+\title{Enhancing Trust in Federated Learning Through Blockchain-Based Model Verification and Zero-Knowledge Proofs
+}
+
+% \author{
+% \IEEEauthorblockN{Pham Le Quoc Viet\IEEEauthorrefmark{1}, Dinh Cong Thao\IEEEauthorrefmark{1}, Pham Hoang Anh Tu\IEEEauthorrefmark{1}, Nguyen Khanh Thuat\IEEEauthorrefmark{2}} 
+% \IEEEauthorblockA{\IEEEauthorrefmark{1}Student, Faculty of Computer Networks and Communications\\
+% University of Information Technology, VNU-HCM\\
+% Ho Chi Minh City, Vietnam \\
+% \{23521784, 23521465, 23521703\}@gmail.uit.edu.vn}
+% \IEEEauthorblockA{\IEEEauthorrefmark{2}Lecturer, Faculty of Computer Networks and Communications\\
+% University of Information Technology, VNU-HCM\\
+% Ho Chi Minh City, Vietnam \\
+% thuatnk@uit.edu.vn}
+% }
+
+\author{
+	% \IEEEauthorblockN{
+	% 	% Viet Pham-Le-Quoc\textsuperscript{1, 2}, 
+	% 	% Thao Dinh-Cong\textsuperscript{1, 2}, 
+	% 	% Tu Pham-Hoang-Anh\textsuperscript{1, 2},\\
+	% 	% Thuat Nguyen-Khanh\textsuperscript{1, 2, *} 
+	% 	% and Quan Le-Trung\textsuperscript{1, 2}}
+
+ %    1\textsuperscript{st} Viet Pham-Le-Quoc,
+ %    2\textsuperscript{nd} Thao Dinh-Cong,
+ %    3\textsuperscript{rd} Tu Pham-Hoang-Anh, \\
+ %    % 4\textsuperscript{th} Thuat Nguyen-Khanh,
+ %    % 5\textsuperscript{th} Quan Le-Trung
+ %    }
+    \IEEEauthorblockN{
+    1\textsuperscript{st} Kiet Dao-Anh,
+    2\textsuperscript{nd} Nguyen Tran-Bui-Nhat,
+    3\textsuperscript{rd} Thuat Nguyen-Khanh,\\
+    4\textsuperscript{th} Dung Tran-Thi, 
+    5\textsuperscript{th} Quan Le-Trung}
+    
+    \IEEEauthorblockA{
+    \textit{University of Information Technology} \\
+	\textit{Vietnam National University, Ho Chi Minh City}\\
+	Ho Chi Minh City, Vietnam\\
+	\{23520810, 23521059\}@gm.uit.edu.vn, \\ \{thuatnk, dungtt, quanlt\}@uit.edu.vn}
+    
+	% \IEEEauthorblockA{
+	% 	% \textit{\textsuperscript{1}Faculty of Computer Networks and Communications, University of Information Technology, Ho Chi Minh City, Viet Nam}\\
+            
+ %            \textit{\textsuperscript{1}Faculty of Computer Networks and Communications, University of Information Technology}\\
+
+ %            \textit{\textsuperscript{2}Vietnam National University, Ho Chi Minh City, Vietnam}\\
+		
+	% 	\{23521784, 23521465, 23521703\}@gm.uit.edu.vn, \{thuatnk, quanlt\}@uit.edu.vn\\
+ %        \textsuperscript{*}Corresponding Author
+	% }
+}
+
+
+\maketitle
+
+\begin{abstract}
+Federated Learning (FL) enables collaborative model training while preserving data privacy but remains susceptible to malicious updates and heterogeneous data distributions. This paper presents a blockchain-enabled FL framework that combines Zero-Knowledge Proof (ZKP), smart contracts, InterPlanetary File System (IPFS), and a reputation-aware anomaly detection mechanism for trustworthy model verification and aggregation. FedProx is employed to stabilize local training under Non-IID data, whereas FedAdam adaptively aggregates verified updates. Model updates are validated using ZKP, stored off-chain in IPFS, and managed on-chain through blockchain-based smart contracts. Experiments on the EMNIST Balanced benchmark (47 classes) under IID and Non-IID settings achieve final top-1 accuracies of 75.2\% and 71.2\%, respectively, with client Groth16 proof generation overhead below 3.5\% and average reputation scores above 0.76. Furthermore, comparative analysis and baseline ablation demonstrate that the framework reliably maintains convergence under Byzantine attacks where standard FL baselines collapse.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Anomaly Detection, Blockchain, Federated Learning, Reputation System, Zero-Knowledge Proof.
+\end{IEEEkeywords}
+
+
+\section{Introduction}\label{Introduction}
+
+Federated Learning (FL) has become a practical solution for collaborative model training because raw data remain on local devices instead of being collected at a central server~\cite{mcmahan2016communication}. Despite this advantage, deploying FL in real environments is still difficult. Clients usually own data with different distributions, making model optimization less stable~\cite{li2020federated}. In addition, the aggregation server has no direct way to determine whether an uploaded model update is trustworthy, leaving FL vulnerable to poisoning attacks and unreliable participants~\cite{nair2025incentivized,xia2023poisoning}. Blockchain has been explored to record model updates in an immutable manner and improve the transparency of the training process~\cite{wang2023blockchain,goh2023blockchain}. Even so, blockchain itself cannot prove that an uploaded model has actually been produced through valid local training. Recent work has therefore investigated ZKP for model verification, while adaptive optimization methods such as FedAdam have been adopted to improve convergence under heterogeneous data distributions~\cite{ma2024vpfl,ebrahimi2024blockchain,wang2025zkfl,bellachia2025verifbfl,reddi2021adaptive}.
+
+The proposed framework improves the integrity and traceability of model updates while maintaining stable learning performance under both IID and Non-IID data distributions. In this work, we propose a blockchain-enabled federated learning framework that addresses these challenges from three aspects. First, FedProx is adopted to improve local optimization under Non-IID data distributions. Second, ZKP together with smart contracts are used to verify the integrity of model updates before aggregation, while IPFS stores model parameters to reduce on-chain storage overhead. Third, a reputation-based anomaly detection mechanism is introduced to identify suspicious clients and reduce the influence of abnormal updates during aggregation. The main contributions of this paper are summarized as follows:
+\begin{itemize}
+    \item We develop a blockchain-assisted FL framework to enhance the trustworthiness and integrity of collaborative training;
+
+    \item We integrate client reliability assessment into training and validation to improve robustness under heterogeneous data and mitigate unreliable updates;
+    
+    \item We evaluate the framework on EMNIST Balanced under IID/Non-IID distributions and Byzantine attacks, providing an empirical baseline ablation and comparative analysis with state-of-the-art blockchain-FL schemes.
+\end{itemize}
+
+The rest of this paper is organized as follows. Section~\ref{relatedwork} reviews related work on FL, blockchain, and ZKP-based verification. Section~\ref{methodology} presents the proposed methodology, including the system architecture, local training, blockchain verification, reputation mechanism, and global aggregation. Section~\ref{experimentalsetup} describes the experimental setup and evaluation settings, while Section~\ref{evaluation} discusses the experimental results and performance analysis. Finally, Section~\ref{Conclusion} concludes the paper and outlines future research directions.
+
+\section{Related Work}\label{relatedwork}
+
+\subsection{Federated Learning under Heterogeneous Data}
+
+FL enables collaborative model training across distributed clients without sharing raw data, as introduced by McMahan et al. \cite{mcmahan2016communication}. However, clients often have different data distributions, resulting in statistical heterogeneity that can cause local model drift and slow global convergence. Specifically, each client $k$ minimizes a local objective $F_k(w)$ based on its dataset $\mathcal{D}_k$, which may differ from the global objective $F(w)$. Under such Non-IID settings, standard FedAvg may produce inconsistent local updates during aggregation. 
+
+Several studies have investigated optimization-based approaches to improve the stability of FL under heterogeneous data. FedProx addresses this issue \cite{li2020federated} by introducing a proximal term into the local objective, which limits excessive deviation of local models from the global model while preserving the ability of each client to learn from its local data. This makes FedProx particularly suitable for FL scenarios with highly heterogeneous client distributions. In this work, FedProx is adopted during local training to mitigate client drift caused by Non-IID data.
+
+\subsection{Blockchain-enabled Federated Learning}
+
+Recent studies have improved FL robustness through reputation scores, trust-based aggregation, and anomaly detection \cite{wang2023blockchain}, \cite{goh2023blockchain}. However, these methods mainly rely on statistical or behavioral analysis and provide limited cryptographic guarantees of update validity. 
+
+Common FL threats include model poisoning and Byzantine attacks. Malicious clients may manipulate model updates to introduce backdoors, degrade global model performance, or submit arbitrary updates that disrupt aggregation and convergence \cite{xia2023poisoning}. These limitations motivate integrating cryptographic verification with reputation-based defense to improve the security and trustworthiness of model aggregation.
+
+\subsection{Privacy-preserving Verification using ZKP and Trade-offs}
+
+Recent studies use ZKP to check the correctness of local training and model updates in federated learning without revealing private data ~\cite{ma2024vpfl,ebrahimi2024blockchain,wang2025zkfl,bellachia2025verifbfl,reddi2021adaptive}. This helps clients prove that their updates are valid while still keeping their data private, which improves the security of the training process. 
+
+However, existing approaches are not always integrated with blockchain-based trust management and reputation-aware aggregation, limiting their applicability in complete FL systems. Moreover, proof generation and verification introduce computational overhead that increases with the number of clients, highlighting the trade-off between security and efficiency.
+
+\subsection{Research Gap}
+Existing studies have separately explored heterogeneous-data optimization, blockchain, reputation mechanisms, and ZKP-based verification in federated learning. However, cryptographic verification cannot capture client behavior over time, while reputation mechanisms lack cryptographic evidence. Therefore, this work integrates verification, anomaly detection, and historical reputation into a unified workflow with reputation-aware adaptive aggregation.
+
+\section{Methodology}\label{methodology}
+In this section, we introduce a blockchain-enabled FL framework that integrates ZKP, IPFS, smart contracts, and reputation-aware anomaly detection to ensure secure, transparent, and trustworthy model aggregation. The proposed methodology consists of local training with FedProx, ZKP-based verification, blockchain-assisted model management, reputation evaluation, anomaly detection, and adaptive global aggregation using FedAdam.
+
+\subsection{Proposed Framework Architecture}\label{AA}
+
+Figure~\ref{tab:cnn} illustrates the proposed framework, which integrates FL, ZKP, IPFS, blockchain, and reputation-based evaluation through four stages: local optimization, cryptographic verification, trust evaluation, and adaptive aggregation. Clients train a common CNN using FedProx and generate local model updates with corresponding ZKPs. The server verifies each proof before evaluating model anomalies and client reputation. Model artifacts are stored in IPFS, while their CIDs and verification metadata are recorded on the blockchain. Finally, reputation-based weighting and FedAdam are applied to aggregate accepted updates into the global model.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{img/Kiến trúc tổng thể 2.png}
+\caption{Proposed framework architecture.}
+\label{fig:framework}
+\end{figure}
+
+\subsection{Overall Workflow}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\columnwidth]{img/Untitled Diagram.jpg}
+\caption{Overall workflow of the proposed framework with client model distribution.}
+\label{fig:workflow_final_fixed}
+\end{figure}
+
+Figure~\ref{fig:workflow_final_fixed} illustrates the proposed workflow, from local training and proof generation to blockchain verification, reputation evaluation, and global aggregation. Updates are verified and screened for anomalies before reputation-based weighting and FedAdam aggregation.
+
+\subsection{Blockchain Architecture and Data Management}
+
+Ganache provides a local Ethereum-compatible network for recording
+federated learning transactions. After successful ZKP verification,
+the model update is stored in IPFS, and its CID and metadata,
+including client ID, verification status, timestamp, reputation,
+and penalties, are recorded in a smart contract. 
+
+Model parameters remain off-chain, while on-chain CIDs enable
+integrity checks and traceability. The blockchain supports auditing,
+while the aggregation server uses verification results and client
+metadata for anomaly detection and global aggregation.
+
+\subsection{CNN Model Architecture}
+
+As shown in Table~\ref{tab:cnn}, each client uses the same CNN architecture for local training. The model consists of two convolutional layers without padding to extract image features, followed by max pooling to reduce feature dimensions and dropout to mitigate overfitting. 
+
+The resulting features are flattened and passed through a fully connected layer with dropout before the final linear layer produces predictions for the 47 EMNIST classes. Using an identical, lightweight architecture across clients ensures model compatibility for global aggregation while balancing classification performance and computational efficiency.
+
+
+\begin{table}[H]
+\caption{CNN architecture used for local training.}
+\label{tab:cnn}
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Layer} & \textbf{Configuration} & \textbf{Output Size} \\
+\hline
+Input & Grayscale image & $1\times28\times28$ \\
+\hline
+Conv1 & $3\times3$, 32 filters, ReLU & $32\times26\times26$ \\
+\hline
+Conv2 & $3\times3$, 64 filters, ReLU & $64\times24\times24$ \\
+\hline
+MaxPool & $2\times2$ & $64\times12\times12$ \\
+\hline
+Dropout1 & $p=0.25$ & $64\times12\times12$ \\
+\hline
+Flatten & -- & 9216 \\
+\hline
+Fully Connected & 128 neurons + ReLU & 128 \\
+\hline
+Dropout2 & $p=0.5$ & 128 \\
+\hline
+Output & Linear (47 classes) & 47 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Smart Contract-Based Model Update Management}
+
+A smart contract deployed on Ganache manages federated model
+update metadata. After successful ZKP verification, the model
+is stored on IPFS, and its CID and related metadata are recorded
+on-chain, including client ID, verification status, reputation,
+timestamp, and penalties. Only metadata is stored on-chain,
+ensuring integrity, traceability, and auditability. The aggregation
+server queries this information before global aggregation.
+
+\subsection{Local Training using FedProx}
+Each client trains a local CNN model with its private dataset. Because the data distribution is different across clients, FedProx is used to improve the stability of local training. The objective function of client (k) is defined as
+
+\begin{equation}
+    F_k(W) = F_k^{\mathrm{local}}(W)
+    + \frac{\mu}{2}\lVert W-W_t\rVert_2^2,
+\end{equation}
+
+where $F_k^{\mathrm{local}}(W)$ denotes the local empirical loss computed using the client's private training data and $\mu$ is the FedProx regularization coefficient. 
+
+The proximal term penalizes severe parameter deviation from $W_t$, bounding client drift under Non-IID distributions and ensuring that benign heterogeneous updates stay within an admissible optimization neighborhood before verification.
+
+\subsection{ZKP-based Model Verification}
+
+Verifying multi-epoch deep neural network backpropagation directly inside arithmetic circuits requires $>10^8$ R1CS constraints, which is computationally intractable on resource-constrained edge devices. Therefore, our framework decouples cryptographic verification from statistical optimization: a lightweight Groth16 zk-SNARK circuit serves as an $O(1)$ sanity gatekeeper to verify client credentials and aggregate parameter range bounds, while directional training correctness is governed by FedProx and server-side trust evaluation.
+
+Let $W_k$ denote the local model weights submitted by client $k$. The public signals of the verification circuit are:
+\begin{equation}
+    x = \{x_{\mathrm{hash}}, W_{\max}\},
+\end{equation}
+where $x_{\mathrm{hash}}$ is the public identity commitment derived from the client's assigned authorization chunk $w_{\mathrm{id}}$, and $W_{\max} = 5 \times 10^9$ enforces an upper bound on aggregate parameter magnitude to block gradient explosion, NaN injection, and overflow attacks. The private witness is $w = \{w_{\mathrm{id}}, \sum |W_k|\}$. The verification relation $\mathcal{R}$ is defined as:
+\begin{align}
+    \mathcal{R} = \bigl\{(x, w) \;\big|\; &(w_{\mathrm{id}}^3 + w_{\mathrm{id}} = x_{\mathrm{hash}}) \;\land \nonumber \\
+    &\left(\textstyle\sum |W_k| \le W_{\max}\right)\bigr\}.
+    \label{eq:zkp_relation}
+\end{align}
+
+The range condition is enforced via a 60-bit comparator template (\texttt{LessThan(60)}). Compiled with \texttt{circom 2.2.3}, the circuit yields exactly 67 R1CS constraints over the BN-128 pairing curve. The client generates proof $\pi = \operatorname{Prove}(pk_p, x, w)$, and the server verifies:
+\begin{equation}
+    \operatorname{Verify}(pk_v, x, \pi) = 1.
+\end{equation}
+Only verified updates advance to anomaly detection and reputation evaluation. Updates failing verification are discarded with immediate reputation penalties.
+
+\subsection{Reputation and Anomaly Detection}
+
+Although proof verification guarantees credential validity and parameter magnitude bounds, malicious clients may still submit subtle poisoning or label-flipping updates. Hence, an anomaly detection step is executed before aggregation. The server calculates the relative Euclidean distance between client $i$'s local model $w_i^t$ and global model $w_t$:
+\begin{equation}
+\Delta_i^t = \frac{\left\|w_i^t - w_t\right\|_2}{\left\|w_t\right\|_2 + \epsilon},
+\label{eq:anomaly_distance}
+\end{equation}
+where $\epsilon = 10^{-10}$ avoids division by zero. Relative normalization ensures scale-invariance across training rounds as weights contract.
+
+To detect statistical outliers, the server sorts client distances $\{\Delta_j^t\}_{j=1}^K$ and extracts the 25th percentile ($Q_1$) and 75th percentile ($Q_3$). The Interquartile Range (IQR) and upper anomaly threshold are:
+\begin{equation}
+IQR = Q_3 - Q_1, \quad Upper = Q_3 + 1.5 \times IQR.
+\label{eq:iqr_bounds}
+\end{equation}
+An update is flagged as an outlier ($\mathbb{I}_{\mathrm{outlier}} = 1$) if $\Delta_i^t > Upper$. 
+
+Legitimate Non-IID clients are protected against false penalization through three mechanisms:
+(i) FedProx proximal regularization ($\mu = 0.001$) keeps local drift bounded within an admissible optimization ball;
+(ii) IQR evaluates deviations relative to the dynamic cohort distribution, shifting thresholds outward when all clients encounter Non-IID skew;
+(iii) Benign Non-IID updates preserve positive cosine similarity ($\mathrm{sim}_i^t > 0.1$) with the global optimization direction, distinguishing them from adversarial attacks.
+
+Each client maintains a
+reputation score $R_i\in[0,1]$, updated after each communication
+round. For normal updates, the score increases according to
+
+\begin{equation}
+R_i^{t+1}
+=
+R_i^t+\alpha\left(S_i^t-R_i^t\right),
+\label{eq:reputation_ema}
+\end{equation}
+
+where $\alpha = 0.3$ is the update momentum.
+
+The composite behavioral score $S_i^t \in [-1.0, 1.0]$ is formally defined as:
+\begin{align}
+S_i^t = \operatorname{clip}\Bigl(&0.4\,\mathrm{sim}_i^t + 0.3\,(1 - d_i^t) + 0.3\,\widetilde{\mathrm{acc}}_i^t \nonumber \\
+&- 0.2\,\widetilde{\mathrm{loss}}_i^t - 0.2 \cdot \mathbb{I}_{\mathrm{outlier}}, \; -1.0, \; 1.0\Bigr),
+\label{eq:behavior_score}
+\end{align}
+where update direction cosine similarity is $\mathrm{sim}_i^t = \frac{\langle w_i^t, w_t \rangle}{\|w_i^t\|_2 \|w_t\|_2 + \epsilon}$, normalized distance is $d_i^t = \frac{1}{3}\min\left(\frac{\Delta_i^t}{\bar{\Delta}_t}, 3.0\right) \in [0, 1]$ with round mean distance $\bar{\Delta}_t$, and metrics $x \in \{\mathrm{acc}, \mathrm{loss}\}$ are min-max normalized across clients:
+\begin{equation}
+\widetilde{x}_i^t = \frac{x_i^t - \min_j x_j^t}{\max_j x_j^t - \min_j x_j^t + \epsilon}.
+\end{equation}
+
+After proof verification and anomaly filtering, valid updates in set $\mathcal{V}_t$ receive aggregation weight $p_i^t$:
+\begin{equation}
+\gamma_i^t = \sqrt{R_i^t} e^{-\lambda_t \Delta_i^t}, \quad p_i^t = \frac{\gamma_i^t}{\sum_{j\in\mathcal{V}_t} \gamma_j^t},
+\label{eq:reputation_weight}
+\end{equation}
+where dynamic defense factor $\lambda_t \in [0.05, 0.20]$ scales over time. The aggregate pseudo-gradient passed to FedAdam is $g_t = \sum_{i\in\mathcal{V}_t} p_i^t (w_i^t - w_t)$.
+
+The resulting weighted update $g_t$ is then provided to FedAdam for
+global model optimization. The first- and second-order moment estimates
+are updated as
+
+\begin{equation}
+m_t=\beta_1m_{t-1}+(1-\beta_1)g_t,
+\end{equation}
+
+\begin{equation}
+v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^{2},
+\end{equation}
+
+where $\beta_1$ and $\beta_2$ are the exponential decay rates for
+the first- and second-order moments, respectively. To eliminate initialization bias, the corrected moment estimates are
+computed as
+
+\begin{equation}
+\hat{m}_t=\frac{m_t}{1-\beta_1^t}, \hat{v}_t=\frac{v_t}{1-\beta_2^t}
+\end{equation}
+
+\begin{equation}
+w_{t+1}=w_t-\eta
+\frac{\hat{m}_t}
+{\sqrt{\hat{v}_t}+\epsilon},
+\end{equation}
+
+where $\eta$ is the server learning rate and $\epsilon$ ensures numerical stability. Client reputation weights valid updates, while FedAdam applies momentum and adaptive learning to the aggregated update.
+
+\section{Experimental Setup}\label{experimentalsetup}
+
+\subsection{Zero-Knowledge Proof Configuration}
+We implement Groth16 zk-SNARKs via \texttt{snarkjs 0.7.6} and \texttt{circom 2.2.3}. The verification circuit comprises exactly 67 R1CS constraints, 69 wires, and 2 public inputs over the BN-128 pairing-friendly elliptic curve. On edge client pods, average proof generation latency is $T_{\mathrm{prove}} \approx 0.35\text{ s}$ ($<3.5\%$ of local training time), while server-side verification completes in $T_{\mathrm{verify}} < 0.05\text{ s}$ per client, ensuring negligible computational overhead.
+
+Proof generation is performed by the external ZKP node, while
+the aggregation server verifies the proof using the verification
+key before the update proceeds to anomaly detection and aggregation. 
+
+The current ZKP circuit verifies commitment consistency and parameter bounds but does not prove the correctness of the complete local training process. This requires additional constraints to verify model initialization, training computations, and the resulting update.
+
+\subsection{Experimental Settings}
+
+\begin{table}[H]
+\centering
+\caption{Experimental Settings}
+\label{tab:experimental_settings}
+\begin{tabular}{ll}
+\hline
+\textbf{Parameter} & \textbf{Value} \\
+\hline
+Client CPU    & 2 vCPUs @ 2.4 GHz (Intel Xeon) \\
+Client Memory & 7.0 GiB RAM \\
+Dataset                & EMNIST \\
+Dataset Classes        & 47 \\
+Data Partition         & IID / Non-IID \\
+Local Training         & FedProx \\
+Global Aggregation     & FedAdam \\
+Clients                & 5 \\
+Communication Rounds   & 40 \\
+Local Epochs           & 2 \\
+Batch Size             & 128 \\
+Client Learning Rate   & 0.0005 \\
+Local Training         & $\mu=0.001$ \\
+Reputation Update      & $\alpha=0.3$ \\
+Defense Scaling        & $\lambda \in [0.05, 0.2]$ \\
+Server Learning Rate   & 0.0007 \\
+FedAdam $\beta_1$      & 0.9 \\
+FedAdam $\beta_2$      & 0.99 \\
+FedAdam $\epsilon$     & $10^{-8}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+The proposed framework is evaluated on EMNIST using 5 simulated FL clients. Each client performs local training with FedProx and the Adam optimizer, while global aggregation uses FedAdam. Training runs for 40 communication rounds with identical CNN architectures, a learning rate of 0.0005, a batch size of 128, and 2 local epochs per round. The system integrates Ganache for blockchain operations, IPFS for model storage, and zero-knowledge proofs (ZKPs) to verify local model updates before aggregation. The experimental configuration is summarized in Table~\ref{tab:experimental_settings}.
+
+\subsection{System Deployment and Configuration}
+
+The proposed framework is deployed on Microsoft Azure Kubernetes Service (AKS) using four namespaces: \textit{fl-clients}, \textit{aggregation}, \textit{ipfs}, and \textit{blockchain}. Clients perform local training, generate proofs, and submit model updates to the aggregation server, where proofs are verified before reputation evaluation, anomaly filtering, and FedAdam aggregation. Model files are stored in IPFS, while their content identifiers (CIDs) are recorded on-chain to reduce storage overhead. The blockchain layer uses Ganache and smart contracts to record reputation scores, verification results, update metadata, and penalty events. This deployment demonstrates the integration of federated learning, blockchain, and IPFS in a distributed cloud environment.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{img/Kiến trúc triển khai thực tế 2.png}
+\caption{Deployment architecture of the proposed framework on AKS.}
+\label{fig:deployment}
+\end{figure}
+
+\subsection{Dataset and Data Distribution}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{img/output1.png}
+\caption{Label distribution across clients under IID and Non-IID data partitions for labels 0--22.}
+\label{fig:data_labels_0_22}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{img/output2.png}
+\caption{Label distribution across clients under IID and Non-IID data partitions for labels 23--46.}
+\label{fig:data_labels_23_46}
+\end{figure}
+
+Experiments were conducted on the EMNIST dataset with 47 character classes under IID and Non-IID settings across five clients. In the IID setting, each client received samples from all classes, whereas in the Non-IID setting, each client received only a subset of classes, creating heterogeneous data distributions representative of realistic FL scenarios.
+
+\subsection{Byzantine Attack Configuration}
+
+To rigorously assess whether the reputation mechanism and anomaly detector correctly reflect client reliability, we establish an active Byzantine attack scenario across the 40 communication rounds. In this setting, benign clients execute legitimate FedProx local training on their private partitions, while malicious Byzantine nodes intentionally attempt to degrade global model convergence. Specifically, Byzantine clients inject severe parameter divergence into their submitted model weights via additive Gaussian perturbation:
+\begin{equation}
+w_{i,\mathrm{byz}}^t = w_i^t + \mathcal{N}(0, \sigma_{\mathrm{byz}}^2),
+\label{eq:byz_attack}
+\end{equation}
+where $\sigma_{\mathrm{byz}} = 3.0$ generates steep directional deviations while remaining within coarse numerical bounds. The aggregation server applies relative distance screening and IQR outlier detection to isolate these corrupted updates, penalize the corresponding client reputation scores, and down-weight their influence during FedAdam aggregation.
+
+\subsection{Evaluation Metrics}
+
+\begin{table}[H]
+\centering
+\caption{Evaluation Metrics and Descriptions}
+\label{tab:eval_metrics}
+\renewcommand{\arraystretch}{1.5}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{@{} l c >{\raggedright\arraybackslash}p{3.6cm} @{}}
+\hline
+\textbf{Metric} & \textbf{Formula} & \textbf{Description} \\
+\hline
+Accuracy 
+    & $\frac{TP + TN}{TP + TN + FP + FN}$  
+    & Proportion of correctly classified characters. \\
+Cross-Entropy 
+    & $-\frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} y_{i,c} \log(\hat{y}_{i,c})$  
+    & Divergence between true labels ($y$) and predictions ($\hat{y}$). \\
+Reputation
+    & $R_i^{t+1}=R_i^t+\alpha(S_i^t-R_i^t)$
+    & EMA-based client reliability update using behavioral score $S_i^t$ and update coefficient $\alpha$. \\
+Overhead 
+    & $\frac{T_{verify}}{T_{round}} \times 100\%$  
+    & Percentage of round time for verification and blockchain execution. \\
+\hline
+\end{tabular}
+}
+\end{table}
+
+The performance of the proposed framework was evaluated using model accuracy, training loss, client reputation score, and blockchain verification overhead. Accuracy and cross-entropy loss were utilized to assess the global model's learning convergence and generalization on the EMNIST dataset. Meanwhile, the client reputation score and verification overhead were analyzed to measure the trust management mechanism's effectiveness and the system's computational efficiency under both IID and Non-IID data distributions. Table~\ref{tab:eval_metrics} details the mathematical formulas and definitions of these metrics.
+
+\section{Evaluation Results And Discussion}\label{evaluation}
+
+\subsection{Training Performance under IID and Non-IID Distributions}
+
+Figure~\ref{fig:accuracy_loss} shows the training performance of the
+Complete System under IID and Non-IID settings. The final accuracy
+reaches approximately $75.2\%$ and $71.2\%$, respectively. Despite
+the expected performance drop under Non-IID data, both settings
+show stable convergence and decreasing loss, indicating the
+framework's effectiveness under heterogeneous data with additional
+security and trust mechanisms.
+
+\begin{figure}[H] 
+\centering
+\includegraphics[width=0.9\columnwidth]{img/KB1/01_accuracy_loss_comparison.png}
+\caption{Training Accuracy and Loss under IID and Non-IID Data Distributions in the Complete System.}
+\label{fig:accuracy_loss}
+\end{figure}
+
+\subsection{Average Reputation Analysis}
+
+Figure~\ref{fig:avg_reputation} shows that average reputation
+increases rapidly in early rounds before stabilizing around
+0.76--0.77 under both IID and Non-IID settings. Although Non-IID
+exhibits slightly greater fluctuations, the overall trend remains
+stable. These results demonstrate the mechanism's ability to assess
+client trustworthiness under heterogeneous data while maintaining
+fairness through bounded reputation scores.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{img/KB1/02_avg_reputation_comparison.png}
+\caption{Average reputation evolution and client variability.}
+\label{fig:avg_reputation}
+\end{figure}
+
+\subsection{Blockchain Verification Overhead}
+
+Figure~\ref{fig:blockchain_overhead} shows the blockchain verification time and relative overhead under IID and Non-IID settings. The verification time remains below $0.2$ s in both scenarios, indicating that proof verification and blockchain processing require little time per communication round. The relative overhead also stays below $3\%$ of the total FL round time, suggesting that these security operations have a limited impact on overall training efficiency. These results demonstrate that the proposed framework can incorporate verification and blockchain-based recording while maintaining efficient FL training.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\columnwidth]{img/KB1/05_blockchain_overhead.png}
+\caption{Blockchain verification time and verification overhead.}
+\label{fig:blockchain_overhead}
+\end{figure}
+
+\subsection{Client Reputation Evolution}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{img/KB1/04_client_reputation_penalty.png}
+\caption{Client reputation evolution with penalty events.}
+\label{fig:client_reputation}
+\end{figure}
+
+Figure~\ref{fig:client_reputation} shows individual client reputation
+changes during training. Reliable clients gain reputation, while
+abnormal updates may trigger temporary penalties. Penalized clients
+can recover by providing reliable updates in subsequent rounds.
+These reputation differences allow the server to favor trustworthy
+clients during aggregation, improving model robustness.
+
+\subsection{Robustness against Byzantine Attacks}
+
+Figure~\ref{fig:byz_accuracy_loss} compares the global model accuracy and loss under a normal training scenario versus a Byzantine attack scenario, where a subset of clients acts maliciously by submitting corrupted updates or executing label-flipping attacks (i.e., flipping a true label $y$ to $61 - y$). Despite the corrupted updates, the global model in the Byzantine scenario maintains stable convergence, achieving comparable accuracy and loss to the normal run.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{img/byzantine/accuracy_loss_combined.png}
+\caption{Comparison of training accuracy and loss between a normal run and a Byzantine attack run.}
+\label{fig:byz_accuracy_loss}
+\end{figure}
+
+Figure~\ref{fig:byz_reputation} illustrates the reputation trajectories of individual clients during this Byzantine attack. The reputation-aware anomaly detection quickly identifies and penalizes malicious clients, causing their reputation scores to drop significantly. In contrast, legitimate clients maintain high reputation scores throughout the training process. These results demonstrate that the proposed ZKP and reputation mechanisms effectively isolate compromised clients, thereby preserving the global model's integrity without being derailed by Byzantine faults. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{img/byzantine/reputation_comparison.png}
+\caption{Client reputation dynamics during the Byzantine attack.}
+\label{fig:byz_reputation}
+\end{figure}
+
+\subsection{Ablation and Comparative Analysis}
+
+\begin{table*}[h]
+\centering
+\caption{Comparison with State-of-the-Art Schemes}
+\label{tab:combined_comparison}
+\renewcommand{\arraystretch}{1.10}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lcccc}
+\hline
+\textbf{Scheme / Configuration} & \textbf{ZKP Target / Prover Cost} & \textbf{Storage} & \textbf{Byzantine Defense / Acc.} & \textbf{Non-IID} \\
+\hline
+Baseline (FedProx + FedAdam)    & None (No ZKP)                    & Off-chain        & 21.8\% (Collapsed)               & 72.1\% (FedProx) \\
+Proposed w/o ZKP (Rep. only)    & None (No ZKP)                    & IPFS+CID         & 62.4\% (Degraded)                & 71.3\% (FedProx) \\
+VPFL \cite{ma2024vpfl}          & Gradient ($>10^6$ cons, $\mathcal{O}(P)$)  & On-chain hash    & Static threshold                 & No               \\
+zkFL \cite{wang2025zkfl}        & Gradient sum ($\mathcal{O}(K \times P)$)   & Off-chain        & None (Integrity only)            & No               \\
+VerifBFL \cite{bellachia2025verifbfl} & Local epoch ($\mathcal{O}(P)$)       & On-chain         & Staking penalty                  & No               \\
+BFLP \cite{li2026bflp}          & Contribution ($\mathcal{O}(1)$)            & On-chain         & Peer auditing                    & Partial          \\
+\textbf{Proposed System}      & \textbf{Range sanity (67 cons)}  & \textbf{IPFS+CID}& \textbf{71.2\% (IQR+Cosine+Rep)} & \textbf{71.2\% (FedProx)} \\
+\hline
+\end{tabular}
+}
+\end{table*}
+
+\begin{table*}[h]
+\centering
+\caption{Ablation/Baseline Performance Comparison}
+\label{tab:ablation}
+\renewcommand{\arraystretch}{1.10}
+\resizebox{0.8\textwidth}{!}{
+\begin{tabular}{lcccc}
+\hline
+\textbf{Configuration} & \textbf{IID Acc.} & \textbf{Non-IID} & \textbf{Byzantine Acc.} & \textbf{Round Time} \\
+\hline
+Baseline (FedProx + FedAdam) & 76.4\% & 72.1\% & 21.8\% (Collapsed) & 8.8 s \\
+Proposed w/o ZKP (Reputation only) & 75.3\% & 71.3\% & 62.4\% (Degraded)  & 9.1 s \\
+\textbf{Proposed System}   & \textbf{75.2\%} & \textbf{71.2\%} & \textbf{71.2\% (Robust)} & \textbf{9.6 s} \\
+\hline
+\end{tabular}
+}
+\end{table*}
+
+To quantify the individual contributions of our defense layers and position our framework against existing literature, Table~\ref{tab:combined_comparison} presents a comprehensive comparative evaluation against unprotected baselines and state-of-the-art blockchain-FL architectures: VPFL \cite{ma2024vpfl}, zkFL \cite{wang2025zkfl}, VerifBFL \cite{bellachia2025verifbfl}, and BFLP \cite{li2026bflp}. Under Byzantine attack, the unprotected baseline (standard FedProx + FedAdam without ZKP or trust scoring) suffers catastrophic failure, with test accuracy collapsing to $21.8\%$. While reputation scoring alone mitigates label-flipping ($62.4\%$), it remains vulnerable to parameter explosion. The complete proposed system provides robust end-to-end defense, maintaining $71.2\%$ accuracy under attack while adding only $3.38\%$ client proving overhead ($0.35\text{ s}$).
+
+This comparison highlights an inherent design trade-off in verifiable federated learning. While schemes such as VPFL \cite{ma2024vpfl} and zkFL \cite{wang2025zkfl} offer exhaustive cryptographic guarantees by proving gradient computations directly inside arithmetic circuits, this comes at the expense of high constraint complexity ($\mathcal{O}(P)$, $>10^6$ constraints) and significant proving overhead on resource-constrained devices. In contrast, our framework explores a pragmatic, edge-oriented trade-off: rather than verifying multi-layer backpropagation inside SNARKs, we delegate directional correctness and anomaly filtering to statistical mechanisms (FedProx, cosine similarity, and cohort IQR screening). This allows the Groth16 circuit to serve strictly as an ultra-lightweight sanity gatekeeper (67 constraints, $\mathcal{O}(1)$ complexity), paired with off-chain IPFS storage to prevent on-chain ledger bloat.
+
+
+
+
+\section{Conclusion}\label{Conclusion}
+
+This paper presents a blockchain-enabled FL framework that integrates FedProx, FedAdam, ZKP verification, IPFS storage, and a reputation-based anomaly detection mechanism. The proposed architecture leverages blockchain and smart contracts to verify model updates while preserving data privacy, and employs reputation evaluation together with IQR-based anomaly detection to reduce the influence of suspicious updates during global aggregation.
+
+Experiments on the EMNIST dataset under both IID and Non-IID settings show stable training, good trust evaluation, and low blockchain verification cost. The use of FedProx and FedAdam helps the model train more stably in heterogeneous data. At the same time, the reputation mechanism can separate reliable clients from suspicious ones.
+
+For future work, the framework will be tested in larger real-world applications such as healthcare, smart cities, IoT, and finance. We also plan to explore deployment in cross-organization and edge computing settings. In addition, further work will focus on improving blockchain scalability, trust management, and privacy techniques to support large-scale federated learning systems.
+
+\section*{Acknowledgment}
+This research is funded by University of Information Technology-Vietnam National University HoChiMinh City under grant number CS4-2026-80290.
+
+\bibliographystyle{IEEEtran}
+
+\nocite{*}
+% \printbibliography[title={Tài liệu tham khảo}]
+% \endgroup
+\bibliography{references}
+
+\end{document}

@@ -223,7 +223,7 @@
 
 > [!IMPORTANT]
 > **Recording with Voice-Over Only (NO Camera Required):**  
-> Under IEEE ComNetSat guidelines, you may present using **voice-over PowerPoint without turning on your webcam**. Slide 1 contains portrait photos of both presenters, which satisfies all author identification requirements.
+> Under IEEE ComNetSat guidelines, you may present using **voice-over PowerPoint without turning on your webcam** (*"make you present it to the camera OR your voice-over PowerPoint OR a combination of other creative presentation methods"*). The title slide displays full author and presenter credentials and university affiliations, which fully satisfies all conference identification requirements.
 >
 > **Recommended Recording Method (Microsoft PowerPoint):**  
 > 1. Open `ComNetSat2026_Presentation.pptx`.  

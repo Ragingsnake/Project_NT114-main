@@ -152,34 +152,35 @@
 ---
 
 #### Slide 10 — 4. Experimental Results: Byzantine Attack Resilience & Defense (7:55 – 8:55)
-> **[Display: Slide 10 — Attack Accuracy Curves, Reputation Drop Chart, Defense Breakdown]**
+> **[Display: Slide 10 — Accuracy Curves (Normal vs. Byzantine), Reputation Dynamics Chart]**
 >
-> "Now, on Slide 10, let's see what happens when the network comes under active attack.
+> "Now, on Slide 10, here we evaluate our framework's robustness against active Byzantine attacks.
 >
-> In Scenario 2, we simulate a severe Byzantine threat where 20% of the clients are malicious. These adversaries inject heavy Gaussian noise—with a variance of $3.0^2$—and actively flip labels to disrupt training.
+> In this scenario, malicious participants inject high-variance Gaussian noise—with a variance of $3.0^2$—and execute label-flipping attacks to try to disrupt training.
 >
-> If you look at the left chart, the blue dotted line shows standard federated learning with no defenses. Under this attack, the baseline completely crashes—its accuracy collapses down to **21.8%**, and the model fails to learn anything.
+> Looking at the left chart, we compare the global model accuracy under normal settings against the same system under Byzantine attack. As you can see, our framework maintains stable convergence throughout training, tracking the normal run very closely and achieving comparable accuracy around 61 to 62% by round 40. The corrupted updates completely fail to derail or degrade the global model.
 >
-> In sharp contrast, our proposed framework—the orange line—holds steady at **71.2% accuracy**, basically tracking clean, non-adversarial training without missing a beat.
->
-> The right-hand plot shows why our defense is so effective: our reputation mechanism. The moment a rogue client pushes corrupted weights, our IQR filter flags the anomaly. Their reputation score plummets from **0.76 down to 0.10 within just 5 rounds**, which effectively zeros out their influence in the FedAdam aggregation.
->
-> Our ablation study confirms this synergy: relying on IQR filtering alone gives us 62.4% accuracy, but adding our 67-constraint ZKP bound locks in the full 71.2% robust performance."
+> The plot on the right explains why: our reputation-based anomaly detection in action. As soon as client 5 submits corrupted updates, the system flags the anomaly. Its reputation score plunges immediately to the minimum bound of 0.10 within the first few rounds, neutralizing its aggregation weight in FedAdam. Meanwhile, legitimate clients maintain high, stable reputation scores between 0.75 and 0.95, ensuring that only trustworthy updates drive the global model."
 
 ---
 
 #### Slide 11 — 5. Conclusions & Future Work (8:55 – 9:30)
-> **[Display: Slide 11 — Two Cards: Conclusions & Future Work]**
+> **[Display: Slide 11 — Conclusions & Future Work Columns]**
 >
-> "To wrap up our key takeaways on Slide 11:
+> "To wrap up our presentation on Slide 11, here are our conclusions and future directions.
 >
-> First, we showed that combining lightweight Groth16 ZKP with off-chain IPFS gives edge clients cryptographic proof of training without the heavy memory bottlenecks of backpropagation circuits.
+> In conclusion:
+> - We developed a blockchain-enabled federated learning framework integrating FedProx, FedAdam, zero-knowledge proofs, IPFS, and reputation mechanisms.
+> - We verify model updates using ZKP and smart contracts, ensuring complete transparency and traceability.
+> - The framework improves training stability across both IID and Non-IID data distributions.
+> - We achieve low blockchain verification overhead while maintaining stable learning performance.
+> - And we successfully detect suspicious clients and minimize the impact of abnormal updates through reputation-based anomaly detection.
 >
-> Second, pairing FedProx and FedAdam stabilizes learning under heavy Non-IID skew, reaching 71.2% accuracy on 47-class EMNIST.
->
-> And third, our dynamic IQR fences and reputation tracking shut down Byzantine attacks within 5 rounds, maintaining 71.2% accuracy where unprotected systems collapse to 21.8%.
->
-> For future work, we plan to test this pipeline on real-world IoT and medical imaging testbeds, and explore recursive SNARKs like Nova to scale verification up to deeper neural architectures."
+> Looking ahead to future work:
+> - We plan to evaluate the framework on larger real-world applications in Healthcare, Smart Cities, IoT, and Finance.
+> - We will extend deployment to cross-organization and edge computing environments.
+> - We aim to improve blockchain scalability and trust management mechanisms.
+> - And finally, we will explore advanced privacy-preserving techniques for large-scale federated learning systems."
 
 ---
 

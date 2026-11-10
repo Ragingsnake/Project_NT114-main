@@ -123,23 +123,23 @@
 
 ### [PRESENTER 2: Nguyen Tran-Bui-Nhat] (Slides 8 to 13: ~5:45 – 9:45)
 
-#### Slide 8 — 4. Experimental Results: Evaluation Metrics & Framework Formulation (5:45 – 6:50)
-> **[Display: Slide 8 — Three Columns & Three Summary Cards Below]**
+#### Slide 8 — 4. Experimental Results: Evaluation Metrics (5:45 – 6:50)
+> **[Display: Slide 8 — Three Columns: Model Performance, Malicious Update Detection, Reputation Mechanism]**
 >
 > "Thanks, Kiet. Hi everyone, I'm Nhat, and I'll take you through our evaluation metrics and experimental findings.
 >
-> Starting on Slide 8, to rigorously test the framework, we established three core evaluation pillars:
+> Starting on Slide 8, to evaluate the system, we established three core metric pillars:
 >
-> First, **Model Performance**: We track global top-1 classification accuracy and loss convergence across rounds. On the optimization side, clients use FedProx with a proximal penalty of $\mu = 0.01$ to keep local models from drifting under Non-IID skew, while the server uses FedAdam with first- and second-order momentum to accelerate global convergence across the 47 balanced alphanumeric classes.
+> First, **Model Performance**: We track global top-1 classification accuracy across 47 balanced EMNIST classes, monitoring loss convergence and descent stability across all 40 communication rounds under both IID and Non-IID distributions.
 >
-> Second, **Malicious Update Detection**: We implement a two-stage defense pipeline. Stage 1 is our 67-constraint Groth16 zero-knowledge proof, which verifies local training validity without exposing any raw private data. Stage 2 is our statistical Interquartile Range (IQR) fence, which filters out poisoned or exploding updates before they can touch model aggregation.
+> Second, **Malicious Update Detection**: We evaluate the system's ability to accept valid client updates while intercepting poisoned updates through our two-stage gating—combining Groth16 zero-knowledge proof verification with dynamic Interquartile Range (IQR) fences.
 >
-> Third, **Reputation Dynamics**: We track client reliability using an Exponential Moving Average with an inertia weight of $\alpha = 0.8$. Reputation scores are bounded between 0.10 and 1.0, starting at a neutral 0.50. We use these scores to weight updates in FedAdam, meaning any malicious node that misbehaves gets its aggregation weight rapidly neutralized down to 0.10."
+> And third, **Reputation Dynamics**: We track how client trust scores evolve over time using an Exponential Moving Average with an inertia weight of $\alpha = 0.8$. These scores are bounded between 0.10 and 1.0, and directly scale the client's aggregation weight in FedAdam, allowing the system to dynamically down-weight suspicious participants."
 
 ---
 
 #### Slide 9 — 4. Experimental Results: Normal Training Scenarios (IID vs. Non-IID) (6:50 – 7:55)
-> **[Display: Slide 9 — Accuracy/Loss Curves, Average Reputation Chart, Key Metrics]**
+> **[Display: Slide 9 — Accuracy/Loss Curves, Average Reputation Chart, Benchmarked Overhead Note]**
 >
 > "Moving to Slide 9, Scenario 1 looks at normal training performance across both IID and Non-IID distributions.
 >
@@ -147,7 +147,7 @@
 >
 > Now turning to the right-hand plot, this shows client reputation over time. As clients reliably submit valid updates, their average reputation steadily rises from the initial 0.5 baseline and levels off around **0.76 to 0.77**. This confirms that honest participants build up trust consistently.
 >
-> In terms of overhead, edge clients generate their Groth16 zero-knowledge proofs in about **0.35 seconds**—that's less than 3.5% overhead on local training. And because we only store the 32-byte IPFS CID on-chain, smart contract verification finishes in under 0.2 seconds with minimal gas usage."
+> Now, you'll notice the two plots here focus on accuracy, loss, and reputation trajectories—there's no overhead chart plotted on this slide, but it's important to highlight our timing benchmarks from the paper: on edge devices, Groth16 zero-knowledge proof generation takes only about **0.35 seconds**, which is less than 3.5% overhead on local training. And because we only store the 32-byte IPFS CID on-chain, smart contract verification finishes in under **0.20 seconds** per round with negligible gas costs."
 
 ---
 

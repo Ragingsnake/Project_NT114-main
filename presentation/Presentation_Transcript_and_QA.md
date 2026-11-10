@@ -7,8 +7,8 @@
 **Session Format:** 10-Minute Video Presentation (Voice-Over or Video) + 5-Minute Live Q&A  
 
 ### Presenter Allocation:
-* **Part 1 (Slides 1 – 8):** Presented by **Mr. Kiet Dao-Anh** (`23520810@gm.uit.edu.vn`)
-* **Part 2 (Slides 9 – 13):** Presented by **Mr. Nguyen Tran-Bui-Nhat** (`23521059@gm.uit.edu.vn`)
+* **Part 1 (Slides 1 – 7):** Presented by **Mr. Kiet Dao-Anh** (`23520810@gm.uit.edu.vn`)
+* **Part 2 (Slides 8 – 13):** Presented by **Mr. Nguyen Tran-Bui-Nhat** (`23521059@gm.uit.edu.vn`)
 
 ---
 
@@ -18,7 +18,7 @@
 
 ---
 
-### [PRESENTER 1: Kiet Dao-Anh] (Slides 1 to 8: ~0:00 – 6:30)
+### [PRESENTER 1: Kiet Dao-Anh] (Slides 1 to 7: ~0:00 – 5:45)
 
 #### Slide 1 — Title Slide & Introduction (0:00 – 0:40)
 > **[Display: Slide 1 — Title, Conference Badge, Authors, UIT Affiliation, Presenter Badges]**
@@ -30,7 +30,7 @@
 > Today, we're presenting our paper: 
 > *'Enhancing Trust in Federated Learning Through Blockchain-Based Model Verification and Zero-Knowledge Proofs.'*
 >
-> For the first half of the talk, I'll walk you through our motivation, existing literature bottlenecks, our four-tier system architecture, and our cloud deployment. Then, Nhat will take over to walk through our experimental results, attack benchmarks, and key takeaways."
+> For the first half of the talk, I'll walk you through our motivation, existing literature bottlenecks, our four-tier system architecture, our cloud deployment, and our dataset setup. Then, Nhat will take over from Slide 8 to walk through our evaluation metrics, experimental results, attack benchmarks, and key takeaways."
 
 ---
 
@@ -94,7 +94,7 @@
 
 ---
 
-#### Slide 6 — 3. Our Methodology: Azure Kubernetes Service Deployment (4:30 – 5:25)
+#### Slide 6 — 3. Our Methodology: Azure Kubernetes Service Deployment (4:30 – 5:20)
 > **[Display: Slide 6 — AKS Cloud Architecture Diagram & 4 Namespaces]**
 >
 > "On Slide 6, we validated this setup by deploying the entire pipeline on **Microsoft Azure Kubernetes Service (AKS)** across four isolated namespaces:
@@ -106,7 +106,7 @@
 
 ---
 
-#### Slide 7 — 4. Experimental Results: Dataset & Data Distribution (5:25 – 6:00)
+#### Slide 7 — 4. Experimental Results: Dataset & Data Distribution (5:20 – 5:45)
 > **[Display: Slide 7 — EMNIST Heatmaps (Labels 0-22 and Labels 23-46) & Specs]**
 >
 > "Moving to Slide 7, here is our experimental setup.
@@ -115,31 +115,33 @@
 >
 > As shown in the class distribution heatmaps:
 > - In the **IID setting (top)**: every client receives an equal, uniform distribution across all 47 classes.
-> - In the **Non-IID setting (bottom)**: we simulate severe data skew using a Dirichlet distribution with $\alpha = 0.5$. Each client only sees a handful of character classes, creating heavy local model divergence."
+> - In the **Non-IID setting (bottom)**: we simulate severe data skew using a Dirichlet distribution with $\alpha = 0.5$. Each client only sees a handful of character classes, creating heavy local model divergence.
+>
+> And with our dataset and distribution setup established, I'll hand things over to Nhat, who's going to walk through our evaluation metrics, experimental results, and attack resilience."
 
 ---
 
-#### Slide 8 — 4. Experimental Results: Evaluation Metrics & Handover (6:00 – 6:35)
-> **[Display: Slide 8 — Three Metric Cards: Model Performance, Malicious Detection, Reputation]**
+### [PRESENTER 2: Nguyen Tran-Bui-Nhat] (Slides 8 to 13: ~5:45 – 9:45)
+
+#### Slide 8 — 4. Experimental Results: Evaluation Metrics & Framework Formulation (5:45 – 6:50)
+> **[Display: Slide 8 — Three Columns & Three Summary Cards Below]**
 >
-> "On Slide 8, we established three core evaluation pillars:
+> "Thanks, Kiet. Hi everyone, I'm Nhat, and I'll take you through our evaluation metrics and experimental findings.
 >
-> 1. **Model Performance:** Tracking global top-1 classification accuracy and loss convergence across rounds under both IID and Non-IID distributions.
-> 2. **Malicious Update Detection:** Using scale-invariant distance, dynamic IQR outlier fences, and cosine similarity to weed out poisoned weights before they can touch the model.
-> 3. **Reputation Dynamics:** Using exponential moving averages to reward consistent, honest participation while rapidly penalizing abnormal updates.
+> Starting on Slide 8, to rigorously test the framework, we established three core evaluation pillars:
 >
-> And with that foundation in place, I'll hand things over to Nhat, who's going to walk through our experimental results and how the framework performs under attack."
+> First, **Model Performance**: We track global top-1 classification accuracy and loss convergence across rounds. On the optimization side, clients use FedProx with a proximal penalty of $\mu = 0.01$ to keep local models from drifting under Non-IID skew, while the server uses FedAdam with first- and second-order momentum to accelerate global convergence across the 47 balanced alphanumeric classes.
+>
+> Second, **Malicious Update Detection**: We implement a two-stage defense pipeline. Stage 1 is our 67-constraint Groth16 zero-knowledge proof, which verifies local training validity without exposing any raw private data. Stage 2 is our statistical Interquartile Range (IQR) fence, which filters out poisoned or exploding updates before they can touch model aggregation.
+>
+> Third, **Reputation Dynamics**: We track client reliability using an Exponential Moving Average with an inertia weight of $\alpha = 0.8$. Reputation scores are bounded between 0.10 and 1.0, starting at a neutral 0.50. We use these scores to weight updates in FedAdam, meaning any malicious node that misbehaves gets its aggregation weight rapidly neutralized down to 0.10."
 
 ---
 
-### [PRESENTER 2: Nguyen Tran-Bui-Nhat] (Slides 9 to 13: ~6:35 – 9:45)
-
-#### Slide 9 — 4. Experimental Results: Normal Training Scenarios (IID vs. Non-IID) (6:35 – 7:45)
+#### Slide 9 — 4. Experimental Results: Normal Training Scenarios (IID vs. Non-IID) (6:50 – 7:55)
 > **[Display: Slide 9 — Accuracy/Loss Curves, Average Reputation Chart, Key Metrics]**
 >
-> "Thanks, Kiet. Hi everyone, I'm Nhat, and I'll be taking you through our experimental results.
->
-> Starting with Slide 9, Scenario 1 looks at normal training performance across both IID and Non-IID distributions.
+> "Moving to Slide 9, Scenario 1 looks at normal training performance across both IID and Non-IID distributions.
 >
 > Looking at the chart on the left, our framework reaches **75.2% top-1 accuracy** on the uniform IID dataset, and **71.2%** under heavy Non-IID skew. What's really encouraging here is that extreme data heterogeneity only causes a **4-percentage-point drop** in accuracy. You can also see that both loss curves trend down smoothly across all 40 rounds, showing that FedProx and FedAdam are working together to keep client drift under control.
 >
@@ -149,7 +151,7 @@
 
 ---
 
-#### Slide 10 — 4. Experimental Results: Byzantine Attack Resilience & Defense (7:45 – 8:55)
+#### Slide 10 — 4. Experimental Results: Byzantine Attack Resilience & Defense (7:55 – 8:55)
 > **[Display: Slide 10 — Attack Accuracy Curves, Reputation Drop Chart, Defense Breakdown]**
 >
 > "Now, on Slide 10, let's see what happens when the network comes under active attack.
@@ -160,7 +162,7 @@
 >
 > In sharp contrast, our proposed framework—the orange line—holds steady at **71.2% accuracy**, basically tracking clean, non-adversarial training without missing a beat.
 >
-> The right-hand plot shows why our defense is so effective: our reputation dynamics. The moment a rogue client pushes corrupted weights, our IQR filter flags the anomaly. Their reputation score plummets from **0.76 down to 0.10 within just 5 rounds**, which effectively zeros out their influence in the FedAdam aggregation.
+> The right-hand plot shows why our defense is so effective: our reputation mechanism. The moment a rogue client pushes corrupted weights, our IQR filter flags the anomaly. Their reputation score plummets from **0.76 down to 0.10 within just 5 rounds**, which effectively zeros out their influence in the FedAdam aggregation.
 >
 > Our ablation study confirms this synergy: relying on IQR filtering alone gives us 62.4% accuracy, but adding our 67-constraint ZKP bound locks in the full 71.2% robust performance."
 
@@ -226,5 +228,5 @@
 > 1. Open `ComNetSat2026_Presentation.pptx`.  
 > 2. Click **Record** $\rightarrow$ **Record Slide Show**.  
 > 3. Ensure **Camera is set to OFF** (Audio only).  
-> 4. Kiet records Slides 1 to 8; Nhat records Slides 9 to 13 following the transcript above.  
+> 4. Kiet records Slides 1 to 7; Nhat records Slides 8 to 13 following the transcript above.  
 > 5. Export to **Full HD (1080p)** `.mp4`. Total duration should be between **9:30 and 9:55 minutes**.

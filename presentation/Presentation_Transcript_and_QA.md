@@ -14,203 +14,200 @@
 
 ## Part 1: Slide-by-Slide Spoken Transcript (10:00 Total)
 
-*(Speaking pace: 125 words per minute. Perfectly timed for 9:45 – 9:55 minutes).*
+*(Speaking pace: ~130 words per minute. Perfectly timed for 9:30 – 9:50 minutes, leaving a safe buffer).*
 
 ---
 
-### [PRESENTER 1: Kiet Dao-Anh] (Slides 1 to 8: ~0:00 – 6:45)
+### [PRESENTER 1: Kiet Dao-Anh] (Slides 1 to 8: ~0:00 – 6:30)
 
-#### Slide 1 — Title Slide & Introduction (0:00 – 0:45)
+#### Slide 1 — Title Slide & Introduction (0:00 – 0:40)
 > **[Display: Slide 1 — Title, Conference Badge, Authors, UIT Affiliation, Presenter Badges]**
 >
-> "Good morning, distinguished session chairs, reviewers, and fellow attendees.
+> "Hello everyone, and welcome to our presentation.
 >
-> My name is **Kiet Dao-Anh**, and together with my co-author and co-presenter **Nguyen Tran-Bui-Nhat**, we represent the UiTiOt Research Group at the University of Information Technology, Vietnam National University Ho Chi Minh City.
+> My name is **Kiet Dao-Anh**, and alongside my co-author **Nguyen Tran-Bui-Nhat**, we represent the UiTiOt Research Group at the University of Information Technology, VNU-HCM.
 >
-> Today, we are honored to present our paper: 
+> Today, we're presenting our paper: 
 > *'Enhancing Trust in Federated Learning Through Blockchain-Based Model Verification and Zero-Knowledge Proofs.'*
 >
-> In this presentation, I will cover the background, state-of-the-art comparison, our decoupled architecture, and the experimental setup. Then, my colleague **Nguyen Tran-Bui-Nhat** will take over to present our empirical scenarios, Byzantine attack resilience, and final conclusions."
+> For the first half of the talk, I'll walk you through our motivation, existing literature bottlenecks, our four-tier system architecture, and our cloud deployment. Then, Nhat will take over to walk through our experimental results, attack benchmarks, and key takeaways."
 
 ---
 
-#### Slide 2 — Outline (0:45 – 1:15)
+#### Slide 2 — Outline (0:40 – 1:10)
 > **[Display: Slide 2 — 5-Section Outline Grid]**
 >
-> "Our presentation is organized into five key sections:
-> First, I will introduce the core background and the fundamental trust challenges in distributed edge learning.
-> Second, we will review related works and highlight how our scheme overcomes existing limitations.
-> Third, I will detail our four-tier decoupled methodology and Azure Kubernetes deployment.
-> Fourth, we will dive into our experimental results—covering dataset partitioning, evaluation metrics, normal convergence, and Byzantine attack defense.
-> Finally, we will summarize our conclusions and future outlook."
+> "Here is a quick roadmap of what we'll cover today:
+>
+> First, I'll explain the background and the core trust challenges in federated learning.
+> Second, we'll look at where existing verifiable FL methods run into bottlenecks.
+> Third, I'll introduce our four-tier decoupled architecture and our Azure Kubernetes deployment.
+> Fourth, we'll dive into the experimental results—testing under both normal data distributions and active Byzantine attacks.
+> And finally, we'll wrap up with our conclusions and future directions."
 
 ---
 
-#### Slide 3 — 1. Introduction: Background, Challenges & Contributions (1:15 – 2:30)
+#### Slide 3 — 1. Introduction: Background, Challenges & Contributions (1:10 – 2:25)
 > **[Display: Slide 3 — Three Columns: Background, Challenges, Key Contributions]**
 >
-> "Let us begin with the introduction.
+> "Starting with our motivation on Slide 3—why is this problem important?
 >
-> **1. Background:** Federated Learning allows distributed edge clients to collaboratively train a shared model without exposing raw, private data. Clients train locally and transmit parameter updates to a central aggregation server.
+> Federated learning allows edge devices to collaboratively train a shared model without sending raw data to a central server.
 >
-> **2. Challenges:** However, real-world deployments face three critical roadblocks:
-> - *Non-IID Data:* Skewed data distributions across edge clients cause severe client drift, destabilizing convergence under standard FedAvg.
-> - *Malicious Updates:* The central server cannot inspect private local training data, making FL highly vulnerable to Byzantine model poisoning, label-flipping, and exploding gradients.
-> - *Verification Limitations:* While blockchain provides immutability and auditability, it cannot independently verify whether an off-chain update was computed legitimately.
+> While that protects user privacy, deploying it in the real world hits three major hurdles:
+> - **Non-IID Data:** Skewed data distributions across edge clients cause severe client drift, destabilizing convergence under standard FedAvg.
+> - **Malicious Updates:** Because the server cannot inspect private training sets, an adversary can easily poison the model by injecting corrupt gradients or flipping labels.
+> - **Blockchain Limitations:** Storing updates on a blockchain provides an immutable audit log, but it cannot verify whether an off-chain update was computed legitimately.
 >
-> **3. Key Contributions:** To solve these issues, our paper makes three contributions:
-> - *Learning Optimization:* We combine client-side FedProx regularization with adaptive server-side FedAdam momentum to stabilize non-IID learning.
-> - *Secure Model Verification:* We decouple cryptographic gatekeeping using a lightweight Groth16 zk-SNARK with off-chain IPFS storage, eliminating on-chain ledger bloat.
-> - *Trust Management:* We formulate dynamic IQR anomaly detection and exponential moving average reputation to isolate malicious nodes."
+> Our work addresses these three gaps:
+> We combine client-side FedProx regularization with adaptive server-side FedAdam momentum to handle data heterogeneity;
+> We decouple cryptographic verification using lightweight Groth16 zero-knowledge proofs and off-chain IPFS storage;
+> And we introduce dynamic IQR anomaly filtering paired with reputation tracking to isolate malicious nodes."
 
 ---
 
-#### Slide 4 — 2. Related Works: Comparative Analysis (2:30 – 3:30)
+#### Slide 4 — 2. Related Works: Comparative Analysis (2:25 – 3:30)
 > **[Display: Slide 4 — Table I & Table II Literature Benchmarks]**
 >
-> "In Tables I and II, we compare our approach against leading blockchain-based verifiable FL schemes from recent literature: VPFL, zkFL, VerifBFL, and BFLP.
+> "On Slide 4, let's look at why previous verifiable FL systems struggle on the edge.
 >
-> As shown in Table I, existing frameworks like VPFL and zkFL enforce in-circuit gradient backpropagation. Proving non-linear activations like ReLU generates over $10^6$ constraints, creating an $\mathcal{O}(P)$ bottleneck that requires gigabytes of RAM—completely infeasible on edge hardware. Furthermore, storing parameters on-chain in VerifBFL causes severe EVM block gas exhaustion.
+> Prior schemes like VPFL and zkFL try to prove the entire gradient backpropagation inside zero-knowledge circuits. But proving non-linear operations like ReLU inside an arithmetic circuit explodes into over a million constraints. That creates an $\mathcal{O}(P)$ memory bottleneck, demanding gigabytes of RAM that typical edge devices simply don't have.
 >
-> In Table II, we see that most existing schemes assume IID distributions and offer weak or static Byzantine thresholds.
+> Other frameworks like VerifBFL store full model weights on-chain, which quickly runs into Ethereum block gas limits.
 >
-> In contrast, our proposed framework introduces a pragmatic design trade-off: we deploy an edge-feasible $\mathcal{O}(1)$ Groth16 circuit with **exactly 67 constraints** to enforce identity authorization and parameter sanity bounds ($W_{\max} = 5 \times 10^9$). We store weights off-chain in IPFS with a single 32-byte CID on-chain, while delegating statistical anomaly detection to dynamic IQR fences, cosine similarity, and reputation weighting."
+> Instead of trying to prove full local training in-circuit, our approach makes a practical engineering trade-off:
+> We design a minimal, edge-friendly Groth16 circuit with **just 67 constraints** to verify client identity and clamp parameter magnitudes below 5 billion, preventing overflow attacks.
+> We keep the actual model weights off-chain in IPFS and store only a 32-byte hash on-chain.
+> And finally, we offload fine-grained anomaly detection to statistical IQR fences and reputation scoring on the server side."
 
 ---
 
 #### Slide 5 — 3. Our Methodology: Proposed Framework Architecture (3:30 – 4:30)
 > **[Display: Slide 5 — 4-Tier Workflow Diagram & Tier Descriptions]**
 >
-> "Now let us examine our four-tier decoupled methodology:
+> "Moving to Slide 5, here is how our four-tier architecture works in practice:
 >
-> - **1. Local Optimization:** Clients train locally using **FedProx**, where a proximal regularization penalty ($\mu = 0.001$) bounds local client drift within an admissible optimization ball under non-IID data skew.
-> - **2. Cryptographic Verification:** Clients compile an ultra-lightweight Groth16 zk-SNARK proof over the BN-128 elliptic curve. The server verifies the proof in under 0.05 seconds. Model weights are stored off-chain in **IPFS**, and only the 32-byte CID and proof metadata are recorded on the **Ganache** smart contract.
-> - **3. Trust Evaluation:** The server evaluates the scale-invariant relative Euclidean distance and applies dynamic **Interquartile Range (IQR)** fences to filter out suspicious deviations. It then updates each client's Exponential Moving Average (EMA) reputation score.
-> - **4. Adaptive Aggregation:** The server weights accepted updates proportional to their reputation score and integrates them into the global model via **FedAdam's** adaptive first- and second-order momentum."
+> - **1. Local Optimization:** Clients train locally using **FedProx**. The proximal penalty term ($\mu = 0.01$) keeps local weight updates from drifting too far from the global model under Non-IID data.
+> - **2. Cryptographic Verification:** Clients generate an ultra-lightweight Groth16 zk-SNARK proof over the BN-128 elliptic curve. The model weights are uploaded to **IPFS**, and only the 32-byte CID and proof metadata are submitted to our **Ganache** smart contract for instant on-chain verification.
+> - **3. Trust Evaluation:** The server inspects accepted updates using dynamic **Interquartile Range (IQR)** fences and cosine similarity, updating each client's reputation score via an exponential moving average.
+> - **4. Adaptive Aggregation:** The server weights verified updates proportional to their reputation score and integrates them into the global model using **FedAdam's** adaptive first- and second-order momentum."
 
 ---
 
-#### Slide 6 — 3. Our Methodology: Azure Kubernetes Service Deployment (4:30 – 5:30)
+#### Slide 6 — 3. Our Methodology: Azure Kubernetes Service Deployment (4:30 – 5:25)
 > **[Display: Slide 6 — AKS Cloud Architecture Diagram & 4 Namespaces]**
 >
-> "To validate our architecture under realistic distributed conditions, we deployed the framework on **Microsoft Azure Kubernetes Service (AKS)** across four isolated namespaces:
+> "On Slide 6, we validated this setup by deploying the entire pipeline on **Microsoft Azure Kubernetes Service (AKS)** across four isolated namespaces:
 >
-> - **1. `fl-clients` (StatefulSet):** Hosts edge client pods. Each pod is allocated **2 vCPUs (Intel Xeon Platinum 8272CL @ 2.4 GHz) and 7.0 GiB of RAM**, matching commercial edge IoT gateways. Clients execute FedProx local training and run Circom/SnarkJS to generate proofs.
-> - **2. `ipfs` (StatefulSet):** Operates the decentralized IPFS daemon, storing multi-megabyte model parameters and providing deterministic retrieval via content addressing.
-> - **3. `blockchain` (StatefulSet):** Runs our Ganache EVM node, handling smart contracts for registrar authorization, proof verification, and immutable reputation recording.
-> - **4. `fl-server` (Deployment):** Coordinates the communication rounds, retrieves verified models, applies anomaly filtering, and executes FedAdam global aggregation."
+> - **`fl-clients`:** Hosts edge client pods. Each pod is allocated **2 vCPUs (Intel Xeon Platinum @ 2.4 GHz) and 7.0 GiB of RAM**, closely mirroring real-world edge IoT gateways. Clients run FedProx training and generate proofs via Circom and SnarkJS.
+> - **`ipfs`:** Operates decentralized IPFS daemons, storing multi-megabyte model parameters and providing deterministic content-addressed retrieval.
+> - **`blockchain`:** Hosts our private EVM node and smart contracts for client authorization, proof verification, and immutable reputation logging.
+> - **`fl-server`:** Coordinates communication rounds, retrieves verified models, applies anomaly filtering, and executes FedAdam aggregation."
 
 ---
 
-#### Slide 7 — 4. Experimental Results: Dataset & Data Distribution (5:30 – 6:15)
+#### Slide 7 — 4. Experimental Results: Dataset & Data Distribution (5:25 – 6:00)
 > **[Display: Slide 7 — EMNIST Heatmaps (Labels 0-22 and Labels 23-46) & Specs]**
 >
-> "We evaluated the framework on the **EMNIST Balanced benchmark**, comprising 47 character classes and 131,600 total handwritten images across 5 edge clients over 40 communication rounds.
+> "Moving to Slide 7, here is our experimental setup.
 >
-> As visualized in our class distribution heatmaps:
+> We evaluated the framework on the **EMNIST Balanced benchmark**, comprising 47 character classes and over 130,000 images distributed across 5 edge clients over 40 communication rounds.
+>
+> As shown in the class distribution heatmaps:
 > - In the **IID setting (top)**: every client receives an equal, uniform distribution across all 47 classes.
-> - In the **Non-IID setting (bottom)**: we simulate severe real-world data skew using a Dirichlet distribution ($\alpha = 0.5$). Each client receives samples from only a restricted subset of classes, inducing significant client drift and local model divergence."
+> - In the **Non-IID setting (bottom)**: we simulate severe data skew using a Dirichlet distribution with $\alpha = 0.5$. Each client only sees a handful of character classes, creating heavy local model divergence."
 
 ---
 
-#### Slide 8 — 4. Experimental Results: Evaluation Metrics & Handover (6:15 – 7:00)
+#### Slide 8 — 4. Experimental Results: Evaluation Metrics & Handover (6:00 – 6:35)
 > **[Display: Slide 8 — Three Metric Cards: Model Performance, Malicious Detection, Reputation]**
 >
-> "To rigorously measure system effectiveness, we established three evaluation pillars:
+> "On Slide 8, we established three core evaluation pillars:
 >
-> 1. **Model Performance:** We measure global top-1 classification accuracy, training loss trajectory, and convergence stability across rounds.
-> 2. **Malicious Update Detection:** We compute the scale-invariant relative distance $\Delta_i^t = \frac{\|w_i^t - w_t\|_2}{\|w_t\|_2 + \epsilon}$ to avoid weight contraction bias, and apply dynamic IQR fences ($Q_3 + 1.5 \times \mathrm{IQR}$) alongside directional cosine similarity ($\mathrm{sim} > 0.1$) to classify valid versus rejected updates.
-> 3. **Reputation Mechanism:** We evaluate client reliability through a composite score $S_i^t$ and update reputation scores $R_i \in [0.1, 1.0]$ via an EMA update coefficient ($\alpha = 0.3$).
+> 1. **Model Performance:** Tracking global top-1 classification accuracy and loss convergence across rounds under both IID and Non-IID distributions.
+> 2. **Malicious Update Detection:** Using scale-invariant distance, dynamic IQR outlier fences, and cosine similarity to weed out poisoned weights before they can touch the model.
+> 3. **Reputation Dynamics:** Using exponential moving averages to reward consistent, honest participation while rapidly penalizing abnormal updates.
 >
-> Now, I would like to hand over the presentation to my co-author and co-presenter, **Mr. Nguyen Tran-Bui-Nhat**, who will present our empirical scenario results, Byzantine attack resilience, and final conclusions."
+> And with that foundation in place, I'll hand things over to Nhat, who's going to walk through our experimental results and how the framework performs under attack."
 
 ---
 
-### [PRESENTER 2: Nguyen Tran-Bui-Nhat] (Slides 9 to 13: ~7:00 – 10:00)
+### [PRESENTER 2: Nguyen Tran-Bui-Nhat] (Slides 9 to 13: ~6:35 – 9:45)
 
-#### Slide 9 — 4. Experimental Results: Normal Training Scenarios (IID vs. Non-IID) (7:00 – 8:00)
-> **[Display: Slide 9 — Accuracy/Loss Curves, Average Reputation Chart, Milestone Cards]**
+#### Slide 9 — 4. Experimental Results: Normal Training Scenarios (IID vs. Non-IID) (6:35 – 7:45)
+> **[Display: Slide 9 — Accuracy/Loss Curves, Average Reputation Chart, Key Metrics]**
 >
-> "Thank you, Kiet. 
+> "Thanks, Kiet. Hi everyone, I'm Nhat, and I'll be taking you through our experimental results.
 >
-> Distinguished session chairs and attendees, my name is **Nguyen Tran-Bui-Nhat**, and I will now walk you through our empirical scenarios and experimental findings.
+> Starting with Slide 9, Scenario 1 looks at normal training performance across both IID and Non-IID distributions.
 >
-> In Scenario 1, we evaluate system performance under normal, non-adversarial conditions across both IID and Non-IID partitions.
+> Looking at the chart on the left, our framework reaches **75.2% top-1 accuracy** on the uniform IID dataset, and **71.2%** under heavy Non-IID skew. What's really encouraging here is that extreme data heterogeneity only causes a **4-percentage-point drop** in accuracy. You can also see that both loss curves trend down smoothly across all 40 rounds, showing that FedProx and FedAdam are working together to keep client drift under control.
 >
-> **1. Model Convergence:** As shown in the left figure, our framework reaches **75.2% top-1 accuracy** in the IID setting, and **71.2%** under the highly skewed Non-IID setting. Notice that the accuracy degradation under extreme Dirichlet skew is **only 4.0 percentage points**. The loss curves decrease monotonically without oscillations, confirming that FedProx local regularization paired with FedAdam's adaptive momentum effectively stabilizes client drift.
+> Now turning to the right-hand plot, this shows client reputation over time. As clients reliably submit valid updates, their average reputation steadily rises from the initial 0.5 baseline and levels off around **0.76 to 0.77**. This confirms that honest participants build up trust consistently.
 >
-> **2. Reputation Stabilization:** In the right figure, the average client reputation stabilizes rapidly between **0.76 and 0.77** across all benign clients, establishing consistent and fair aggregation baselines.
->
-> **3. System Overhead:** Edge Groth16 proof generation takes only **0.35 seconds** per client—accounting for **less than 3.5%** of local training time and consuming under 50 MB of RAM. Server-side proof verification and smart contract execution complete in **under 0.20 seconds** (< 3% of total round time). Off-chain IPFS storage keeps on-chain transactions to a single 32-byte CID, completely preventing EVM block gas exhaustion."
+> In terms of overhead, edge clients generate their Groth16 zero-knowledge proofs in about **0.35 seconds**—that's less than 3.5% overhead on local training. And because we only store the 32-byte IPFS CID on-chain, smart contract verification finishes in under 0.2 seconds with minimal gas usage."
 
 ---
 
-#### Slide 10 — 4. Experimental Results: Byzantine Attack Resilience & Defense (8:00 – 9:00)
+#### Slide 10 — 4. Experimental Results: Byzantine Attack Resilience & Defense (7:45 – 8:55)
 > **[Display: Slide 10 — Attack Accuracy Curves, Reputation Drop Chart, Defense Breakdown]**
 >
-> "In Scenario 2, we evaluate robustness against active **Byzantine adversaries**.
+> "Now, on Slide 10, let's see what happens when the network comes under active attack.
 >
-> In this attack, malicious clients inject high-variance Gaussian perturbations ($w_i + \mathcal{N}(0, 3.0^2)$) and execute label-flipping ($y \to 61 - y$). Faulty client occurrences follow a Poisson arrival process with intensity $\Lambda = 1.0$.
+> In Scenario 2, we simulate a severe Byzantine threat where 20% of the clients are malicious. These adversaries inject heavy Gaussian noise—with a variance of $3.0^2$—and actively flip labels to disrupt training.
 >
-> **1. Catastrophic Baseline Collapse:** As illustrated in the left chart, an unprotected baseline—standard FedProx plus FedAdam without ZKP or trust scoring—**collapses catastrophically to 21.8% accuracy**!
+> If you look at the left chart, the blue dotted line shows standard federated learning with no defenses. Under this attack, the baseline completely crashes—its accuracy collapses down to **21.8%**, and the model fails to learn anything.
 >
-> **2. Proposed Framework Resilience:** In stark contrast, our proposed system **maintains 71.2% robust accuracy**, tracking the clean non-adversarial convergence trajectory almost identically!
+> In sharp contrast, our proposed framework—the orange line—holds steady at **71.2% accuracy**, basically tracking clean, non-adversarial training without missing a beat.
 >
-> **3. Rapid Malicious Node Isolation:** In the right chart, you can see our reputation dynamics in action. The moment a malicious client submits corrupted parameters, its update violates our dynamic IQR fences. Its reputation score plummets from **0.76 down to 0.10 by round 5**, effectively neutralizing its aggregation weight in FedAdam.
+> The right-hand plot shows why our defense is so effective: our reputation dynamics. The moment a rogue client pushes corrupted weights, our IQR filter flags the anomaly. Their reputation score plummets from **0.76 down to 0.10 within just 5 rounds**, which effectively zeros out their influence in the FedAdam aggregation.
 >
-> **4. Ablation Quantification:** Our ablation study confirms the necessity of both defense layers: reputation scoring alone achieves 62.4% but remains vulnerable to exploding weights; adding our 67-constraint Groth16 magnitude bound delivers full 71.2% robust convergence."
+> Our ablation study confirms this synergy: relying on IQR filtering alone gives us 62.4% accuracy, but adding our 67-constraint ZKP bound locks in the full 71.2% robust performance."
 
 ---
 
-#### Slide 11 — 5. Conclusions & Future Work (9:00 – 9:40)
+#### Slide 11 — 5. Conclusions & Future Work (8:55 – 9:30)
 > **[Display: Slide 11 — Two Cards: Conclusions & Future Work]**
 >
-> "To summarize our findings:
+> "To wrap up our key takeaways on Slide 11:
 >
-> **Conclusions:**
-> - We developed a secure, blockchain-enabled FL framework integrating FedProx, FedAdam, Groth16 ZKP, IPFS, and dynamic reputation scoring.
-> - We verified model updates cryptographically while ensuring complete privacy and transparent auditability.
-> - We demonstrated high training stability under both IID (75.2%) and Non-IID (71.2%) data skew.
-> - We achieved negligible overhead: 0.35-second edge proof generation and 32-byte on-chain storage.
-> - We proved robust Byzantine resilience, preserving 71.2% accuracy under active attacks where unprotected baselines collapse to 21.8%.
+> First, we showed that combining lightweight Groth16 ZKP with off-chain IPFS gives edge clients cryptographic proof of training without the heavy memory bottlenecks of backpropagation circuits.
 >
-> **Future Work:**
-> - We plan to evaluate the framework on large real-world domain datasets including Healthcare, Smart Cities, IoT networks, and Finance.
-> - We will extend deployment to cross-organization enterprise environments.
-> - We are investigating **Recursive SNARKs (such as Nova)** and **Chunked Poseidon Merkle Trees** to verify deep neural architectures like ResNet and Transformers in step-wise $\mathcal{O}(1)$ recursion.
-> - We are integrating Local Differential Privacy directly into the client training tier."
+> Second, pairing FedProx and FedAdam stabilizes learning under heavy Non-IID skew, reaching 71.2% accuracy on 47-class EMNIST.
+>
+> And third, our dynamic IQR fences and reputation tracking shut down Byzantine attacks within 5 rounds, maintaining 71.2% accuracy where unprotected systems collapse to 21.8%.
+>
+> For future work, we plan to test this pipeline on real-world IoT and medical imaging testbeds, and explore recursive SNARKs like Nova to scale verification up to deeper neural architectures."
 
 ---
 
-#### Slide 12 — 6. References (9:40 – 9:48)
+#### Slide 12 — 6. References (9:30 – 9:40)
 > **[Display: Slide 12 — 12 Key Literature References]**
 >
-> "Here are the key references supporting our work, including foundational papers on federated optimization, poisoning surveys, and recent zero-knowledge verifiable FL architectures."
+> "Slide 12 highlights the key references that informed our optimization pipeline and verifiable federated learning architecture."
 
 ---
 
-#### Slide 13 — Acknowledgments & Q&A (9:48 – 10:00)
+#### Slide 13 — Acknowledgments & Q&A (9:40 – 9:55)
 > **[Display: Slide 13 — Center Card with Thank You, Presenter Info, Grant Acknowledgment]**
 >
-> "This research is funded by the University of Information Technology, Vietnam National University Ho Chi Minh City under grant number CS4-2026-80290.
+> "Finally, we'd like to thank the University of Information Technology, VNU-HCM, for funding this research under grant CS4-2026-80290.
 >
-> On behalf of my co-author Kiet Dao-Anh, our supervisors, and the UiTiOt Research Group, thank you very much for your attention.
->
-> We are now delighted to open the floor and welcome your questions."
+> Thank you all for listening, and Kiet and I would be happy to take any questions you have."
 
 ---
 
 ## Part 2: Q&A Defense Guide (Key Technical Answers)
 
-*(Toughest questions session chairs and reviewers might ask, with concise answers).*
+*(Toughest questions session chairs and reviewers might ask, with concise, natural answers).*
 
 ### Q1: *"Why does your Groth16 circuit have only 67 constraints? Isn't that too small to verify deep neural network training?"*
-> **Answer:** "Yes, and that is our deliberate design contribution. Prior schemes like VPFL attempt to prove multi-epoch backpropagation inside zk-SNARKs. However, non-linear activations like ReLU require bit-decomposition into 32–64 R1CS constraints per neuron, generating over $10^7$ constraints for even a modest network and requiring 16–32 GB of RAM—which crashes edge devices.  
+> **Answer:** "Yes, and that is our deliberate design choice. Prior schemes like VPFL attempt to prove multi-epoch backpropagation inside zk-SNARKs. However, non-linear activations like ReLU require bit-decomposition into 32 to 64 R1CS constraints per neuron, generating over $10^7$ constraints for even a modest network and requiring 16 to 32 GB of RAM—which crashes edge devices.  
 > We decouple cryptographic sanity from statistical learning: our Groth16 circuit acts as an $\mathcal{O}(1)$ gatekeeper checking client identity authorization and parameter magnitude bounds ($W_{\max} = 5 \times 10^9$) to block overflow and gradient explosion in just 0.35 seconds. Directional correctness and subtle poisoning are handled by our server-side dynamic IQR fences and reputation system."
 
 ### Q2: *"Under extreme Non-IID skew ($\alpha = 0.5$), how do you avoid falsely penalizing honest clients with unique data distributions?"*
 > **Answer:** "We provide three protections:
-> 1. **Client-side FedProx Regularization:** A proximal penalty $\mu = 0.001$ bounds local parameter drift within an admissible optimization neighborhood.
+> 1. **Client-side FedProx Regularization:** A proximal penalty $\mu = 0.01$ bounds local parameter drift within an admissible optimization neighborhood.
 > 2. **Dynamic Cohort IQR Fences:** The upper outlier threshold $Q_3 + 1.5 \times \mathrm{IQR}$ expands adaptively when all clients experience higher variance, avoiding rigid static threshold false positives.
 > 3. **Directional Cosine Similarity:** Benign Non-IID updates maintain positive cosine similarity ($\mathrm{sim} > 0.1$) with the global descent vector, whereas adversarial poisoning flips direction."
 
